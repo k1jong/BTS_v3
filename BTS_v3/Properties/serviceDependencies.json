@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "type": "mssql",
+      "connectionId": "WMINVData"
+    },
+    "mssql2": {
+      "type": "mssql",
+      "connectionId": "Infofare"
+    },
+    "mssql3": {
+      "type": "mssql",
+      "connectionId": "KepcoDayLpData"
+    },
+    "mssql4": {
+      "type": "mssql",
+      "connectionId": "Rasbts"
+    },
+    "mssql5": {
+      "type": "mssql",
+      "connectionId": "WMAHUData"
+    }
+  }
+}

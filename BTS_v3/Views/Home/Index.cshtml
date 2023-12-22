@@ -1,0 +1,635 @@
+﻿@model List<WMAHUData>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script>document.addEventListener('contextmenu', event => event.preventDefault());</script>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR&display=swap" rel="stylesheet"> @*구글 폰트 주소*@
+	<link rel="stylesheet" href="~/css/popup.css"> @* popup창 *@
+	<link rel="stylesheet" href="~/css/toggle.css"> @* on/off 버튼 *@
+	<link rel="stylesheet" href="~/css/divDivision.css"> @* div화면 분할 창 *@
+	<script>document.addEventListener('contextmenu', event => event.preventDefault());</script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/justgage/1.2.2/justgage.js"></script>
+	<script src="~/microsoft/signalr/dist/browser/signalr.js"></script>
+	@*지도 불러오는 js*@
+	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=	aa91d2add6782fdede2a7abacbf07703&libraries=clusterer"></script>
+	<title>
+		대시보드
+	</title>
+	<style>
+		/* svg태그 공장 박스 크기 */
+		.row.content {
+			height: 550px;
+			width: 900px;
+		}
+		/* 정보 박스 */
+		#info-box {
+			display: none;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			z-index: 100;
+			background-color: #ffffff;
+			border: 2px solid #BF0A30;
+			border-radius: 5px;
+			padding: 5px;
+			width: auto;
+			font-family: arial;
+			color: black;
+			font-weight: bold;
+		}
+		/* 마우스커서 hover기능 */
+		path:hover {
+			cursor: pointer;
+		}
+		/* 팝업 */
+		#popup {
+			position: relative;
+			font-family: arial;
+			color: black;
+			font-weight: bold;
+			z-index: 9999;
+			top: 100px;
+			left: 500px;
+		}
+		/* popuphead 위치 */
+		#popuphead {
+			position: absolute;
+			top: 0;
+			left: 0;
+			margin: 10px 0px 10px 20px; /* 위, 오른쪽, 아래, 왼쪽 */
+		}
+		/* X 위치 */
+		#closePopup {
+			position: absolute;
+			top: 0;
+			right: 0;
+			cursor: pointer;
+			margin: 10px 20px 10px 0px; /* 위, 오른쪽, 아래, 왼쪽 */
+		}
+		/* popup공조기 사진 */
+		#popup img {
+			width: 80%; /* 이미지의 가로 크기를 현재 컨테이너의 80%로 설정 */
+			height: auto; /* 세로 크기를 자동으로 조절하여 비율을 유지 */
+		}
+		/* 가운데 줄 */
+		.charttop {
+			border-bottom: 2px solid gray;
+		}
+
+		/* 공조기 위치 위치 */
+		.moveToSpecificPosition2 {
+			position: absolute;
+			top: 570px;
+			left: 80px;
+			color: black;
+		}
+		/* 실내온도 실내 습도 위치 */
+		.moveToSpecificPosition3 {
+			position: absolute;
+			top: 70px;
+			left: 80px;
+			color: black;
+			z-index: -1;
+		}
+		/* 실외온도 실외습도 위치*/
+		.moveToSpecificPosition4 {
+			position: absolute;
+			top: 320px;
+			left: 80px;
+			color: black;
+			z-index: -1;
+		}
+		/* 온 습도 현황 그래프 위치*/
+		.moveToSpecificPosition5 {
+			position: absolute;
+			top: 70px;
+			left: 795px;
+			color: black;
+			z-index: -1;
+		}
+		/* 제1공장 위치*/
+		.moveToSpecificPosition6 {
+			position: absolute;
+			top: 570px;
+			left: 1000px;
+			color: black;
+		}
+		/* 공조기 위치 크기 */
+		.custom-card2 {
+			width: 910px;
+			height: 370px;
+		}
+		/* 실내온도 실내습도 크기 */
+		.custom-card3 {
+			width: 340px;
+			height: 240px;
+		}
+		/* 실외온도 실외습도 크기 */
+		.custom-card4 {
+			width: 340px;
+			height: 240px;
+		}
+		/* 온.습도 현황 그래프 크기 */
+		.custom-card5 {
+			width: 1110px;
+			height: 490px;
+		}
+		/* 제1공장 크기 */
+		.custom-card6 {
+			width: 900px;
+			height: 370px;
+		}
+
+		/* 글씨 폰트 */
+		.noto-serif-text {
+			font-family: 'NanumGothic', serif;
+			/* 다른 스타일들도 여기에 추가할 수 있습니다. */
+		}
+		.gauge{
+			color : white;
+			font-size : 60px;
+		}
+	</style>
+</head>
+<body>
+	@* 공조기 위치 *@
+	@* 지도 코드를 넣을 시 z-index에 따라서 지도가 클릭이 되지 않을 수 있음*@
+	<div class=" moveToSpecificPosition2">
+		<div class="row">
+			<div class="col">
+				<div class="custom-card2" style="background-color: white;  color : black;border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-header py-2">
+						<a style="font-family : 'NanumGothic', serif; font-size : 18px; font-weight : bold;">공장 위치</a>
+					</div>
+					<div class="card-body">
+						<div id="map" style="width: 870px; height: 300px; color : black"></div>
+						<script>
+							var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+								mapOption = {
+									center: new kakao.maps.LatLng(36.5683543, 128.729357), // 지도의 중심좌표
+									level: 13 // 지도의 확대 레벨
+								};
+
+							var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+							// 마커를 표시할 위치와 내용을 가지고 있는 객체 배열입니다
+							var positions = [
+								{
+									content: '<div>제1공장</div>',
+									latlng: new kakao.maps.LatLng(36.5683543, 128.729357)
+								},
+								{
+									content: '<div>제2공장</div>',
+									latlng: new kakao.maps.LatLng(37.1209, 128.4637)
+								},
+								{
+									content: '<div>제3공장</div>',
+									latlng: new kakao.maps.LatLng(35.5339, 128.3932)
+								},
+							];
+							for (var i = 0; i < positions.length; i++) {
+								// 마커를 생성합니다
+								var marker = new kakao.maps.Marker({
+									map: map, // 마커를 표시할 지도
+									position: positions[i].latlng // 마커의 위치
+								});
+
+								// 마커에 표시할 인포윈도우를 생성합니다
+								var infowindow = new kakao.maps.InfoWindow({
+									content: positions[i].content // 인포윈도우에 표시할 내용
+								});
+
+								// 마커에 mouseover 이벤트와 mouseout 이벤트를 등록합니다
+								// 이벤트 리스너로는 클로저를 만들어 등록합니다
+								// for문에서 클로저를 만들어 주지 않으면 마지막 마커에만 이벤트가 등록됩니다
+								kakao.maps.event.addListener(marker, 'mouseover', makeOverListener(map, marker, infowindow));
+								kakao.maps.event.addListener(marker, 'mouseout', makeOutListener(infowindow));
+							}
+
+							// 인포윈도우를 표시하는 클로저를 만드는 함수입니다
+							function makeOverListener(map, marker, infowindow) {
+								return function () {
+									infowindow.open(map, marker);
+								};
+							}
+
+							// 인포윈도우를 닫는 클로저를 만드는 함수입니다
+							function makeOutListener(infowindow) {
+								return function () {
+									infowindow.close();
+								};
+							}
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	@* 실내 온도 습도 *@
+	<div class=" moveToSpecificPosition3">
+		<div class="row">
+			<div class="col">
+				<div class="custom-card3" style="background-color: white; color : black; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-header py-2">
+						<a style="font-family : 'NanumGothic', serif; font-size : 18px; font-weight : bold;">실내 온도</a>
+					</div>
+					<div class="card-body">
+						<div class="container">
+							<div id="gg1" class="gauge"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col">
+				<div class="custom-card3" style="background-color: white; color : black;border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-header py-2">
+						<a style="font-family : 'NanumGothic', serif; font-size : 18px; font-weight : bold;">실내 습도</a>
+					</div>
+					<div class="card-body">
+						<div class="container">
+							<div id="gg2" class="gauge"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	@* 실외 온도 습도 *@
+	<div class=" moveToSpecificPosition4">
+		<div class="row">
+			<div class="col">
+				<div class="custom-card4" style="background-color: white; color : black; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-header py-2">
+						<a style="font-family : 'NanumGothic', serif; font-size : 18px; font-weight : bold;">실외 온도</a>
+					</div>
+					<div class="card-body">
+						<div class="container">
+							<div id="gg3" class="gauge"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col">
+				<div class="custom-card4" style="background-color: white; color : black; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-header py-2">
+						<a style="font-family : 'NanumGothic', serif; font-size : 18px; font-weight : bold;">실외 습도</a>
+					</div>
+					<div class="card-body">
+						<div class="container">
+							<div id="gg4" class="gauge"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	@* 온.습도 현황 그래프 *@
+	<div class=" moveToSpecificPosition5">
+		<div class="row">
+			<div class="col">
+				<div class="custom-card5" style="background-color: white; color : black;border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-header py-2">
+						<a style="font-family : 'NanumGothic', serif; font-size : 18px; font-weight : bold;">온.습도 현황 그래프</a>
+					</div>
+					<div class="card-body">
+						<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+						<div id="myChart"></div>
+						<script>
+							document.addEventListener("DOMContentLoaded", function () {
+								var sensorDataArray = @Html.Raw(Json.Serialize(ViewBag.result));
+
+								function drawChart(sensorDataArray) {
+									var timeStamps = sensorDataArray.map(data => data.eventProcessedUtcTime);
+									var temperatureData = sensorDataArray.map(data => data.tempDiff);
+									var humidityData = sensorDataArray.map(data => data.humidDiff);
+
+									var trace1 = {
+										x: timeStamps,
+										y: temperatureData,
+										type: 'scatter',
+										mode: 'lines+markers',
+										name: '온도 차이',
+										line: { color: 'rgba(255, 99, 132, 1)' }
+									};
+
+									var trace2 = {
+										x: timeStamps,
+										y: humidityData,
+										type: 'scatter',
+										mode: 'lines+markers',
+										name: '습도 차이',
+										line: { color: 'rgba(54, 162, 235, 1)' }
+									};
+
+									var layout = {
+										xaxis: {
+											title: '시간',
+											type: 'category',  // Set x-axis type to "category"
+											tickmode: 'array', // Set tick mode to "array"
+											tickvals: timeStamps,  // Use timeStamps as tick values
+											ticktext: timeStamps.map(date => new Date(date).toLocaleTimeString()),  // Format timeStamps for tick text
+										},
+										yaxis: {
+											title: '차이'
+										},
+										width: 1000,
+										height: 400
+									};
+
+									var data = [trace1, trace2];
+
+									Plotly.newPlot('myChart', data, layout);
+								}
+
+								var connection = new signalR.HubConnectionBuilder().withUrl("/charthub").build();
+
+								connection.on("ReceiveChartData", function (temperature, humidity, eventProcessedUtcTime) {
+									var floatTemperature = parseFloat(temperature);
+									var floatHumidity = parseFloat(humidity);
+
+									// Convert the date string to a JavaScript Date object
+									var date = new Date(eventProcessedUtcTime);
+
+									sensorDataArray.push({ eventProcessedUtcTime: date, TempDiff: floatTemperature, HumidDiff: floatHumidity });
+
+									// 최신 10개만 유지
+									if (sensorDataArray.length > 10) {
+										sensorDataArray.shift(); // 가장 오래된 데이터 제거
+									}
+
+									// 차트 그리기
+									drawChart(sensorDataArray);
+								});
+
+								getSensorData();
+
+								setInterval(getSensorData, 5000);
+
+								function getSensorData() {
+									$.ajax({
+										type: "POST",
+										url: "/Home/GetChartData", // Change the URL to match your controller action for retrieving chart data
+										success: function (result) {
+											console.log("Sensor data retrieved successfully.");
+
+											// Assuming the result is an array of objects with temperature and humidity properties
+											result.forEach(function (data) {
+												sensorDataArray.push(data);
+												if (sensorDataArray.length > 10) {
+													sensorDataArray.shift(); // 가장 오래된 데이터 제거
+												}
+											});
+											console.log(sensorDataArray);
+											drawChart(sensorDataArray);
+										},
+										error: function (error) {
+											console.error("Failed to retrieve sensor data.", error);
+										}
+									});
+								}
+							});
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	@* 제 1공장 *@
+	<div class=" moveToSpecificPosition6">
+		<div class="row">
+			<div class="col">
+				<div class="custom-card6" style="background-color: white; color : black;border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); overflow : hidden;">
+					<div class="card-header py-2" style="z-index : -1">
+						<a style="font-family : 'NanumGothic', serif; font-size : 18px; font-weight : bold;">제 1공장</a>
+					</div>
+					<div class="card-body">
+						@{
+							Dictionary<string, string> machineNames = new Dictionary<string, string>
+						{
+						{"A00", "AHU-01"},
+						{"A01", "AHU-02"},
+						{"A02", "AHU-03"},
+						{"A03", "AHU-04A"},
+						{"A04", "AHU-04B"},
+						{"A05", "AHU-05"},
+						{"A06", "AHU-06"},
+						{"A07", "AHU-07"},
+						{"A08", "AHU-08"},
+						{"A09", "AHU-09"},
+						{"A10", "AHU-10"}
+						};
+						}
+
+						<table class="table" style="background-color : white;">
+							<thead>
+								<tr>
+									<th rowspan="2">공조기</th>
+									<th colspan="1">압축기1</th>
+									<th colspan="1">압축기2</th>
+									<th colspan="1">냉/난방 운전</th>
+									<th colspan="1">제/가습 운전</th>
+									<th rowspan="2">온도 이상</th>
+								</tr>
+								<tr>
+									<th>운전</th>
+									<th>운전</th>
+									<th>운전</th>
+									<th>운전</th>
+								</tr>
+							</thead>
+							<tbody>
+							<tbody class="rotating-rows">
+									@foreach (var data in Model)
+									{
+									<tr>
+										<td>@machineNames[data.Ahu_id]</td>
+										<td style="color: @(data.Ahu_comp1_run == 1 ? "green" : "red")">@(data.Ahu_comp1_run == 1 ? "O" : "X")</td>
+										<td style="color: @(data.Ahu_comp2_run == 1 ? "green" : "red")">@(data.Ahu_comp2_run == 1 ? "O" : "X")</td>
+										<td style="color: @(data.Ahu_warm_run == 1 ? "green" : "red")">@(data.Ahu_warm_run == 1 ? "O" : "X")</td>
+										<td style="color: @(data.Ahu_addhum_run == 1 ? "green" : "red")">@(data.Ahu_addhum_run == 1 ? "O" : "X")</td>
+										<td>
+												@if (data.Ahu_ret_temp - data.Ahu_sup_temp > 5)
+												{
+												<img src="/img/warning.png" alt="경고이미지" width="20px" , height="20px" />
+												}
+												else
+												{
+													<text></text>
+												}
+										</td>
+									</tr>
+									}
+							</tbody>
+						</table>
+						<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+						<script>
+							$(document).ready(function () {
+								var rows = $('.table tbody tr');
+								var firstSet = rows.slice(0, 6);
+								var secondSet = rows.slice(6);
+
+								function showFirstSet() {
+									firstSet.show();
+									secondSet.hide();
+									setTimeout(showSecondSet, 5000);
+								}
+
+								function showSecondSet() {
+									firstSet.hide();
+									secondSet.show();
+									setTimeout(showFirstSet, 5000);
+								}
+
+								// Initially show the first set of rows
+								showFirstSet();
+							});
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		document.addEventListener("DOMContentLoaded", function (event) {
+
+			var dflt = {
+				min: 0,
+				max: 50,
+				donut: true,
+				gaugeWidthScale: 0.6,
+				counter: true,
+				hideInnerShadow: true,
+				width: 220,
+				height: 170
+			};
+
+			var dflt2 = {
+				min: 0,
+				max: 100,
+				donut: true,
+				gaugeWidthScale: 0.6,
+				counter: true,
+				hideInnerShadow: true,
+				width: 220,
+				height: 170,
+			};
+
+			var gg1 = new JustGage({
+				id: 'gg1',
+				value: @ViewBag.innersensorData.temperature,
+				title: '°C',
+				defaults: dflt,
+			});
+
+			var gg2 = new JustGage({
+				id: 'gg2',
+				value: @ViewBag.innersensorData.humidity,
+				title: '%',
+				defaults: dflt2
+			});
+
+			var gg3 = new JustGage({
+				id: 'gg3',
+				value: @ViewBag.outersensorData.temperature,
+				title: '°C',
+				defaults: dflt
+			});
+
+			var gg4 = new JustGage({
+				id: 'gg4',
+				value: @ViewBag.outersensorData.humidity,
+				title: '%',
+				defaults: dflt2
+			});
+
+		
+
+			function updateTemperatureGauge(value) {
+				gg1.refresh(value);
+			}
+
+			function updateHumidityGauge(value) {
+				gg2.refresh(value);
+			}
+
+			function updateTemperatureGauge1(value) {
+				gg3.refresh(value);
+			}
+
+			function updateHumidityGauge1(value) {
+				gg4.refresh(value);
+			}
+
+			// 실시간 온습도
+			var connection = new signalR.HubConnectionBuilder().withUrl("/datahub").build();
+
+			connection.on("ReceiveSensorData", function (itmp, ihum, otmp, ohum) {
+				var ifloatTemperature = parseFloat(itmp);
+				var ifloatHumidity = parseFloat(ihum);
+				var ofloatTemperature = parseFloat(otmp);
+				var ofloatHumidity = parseFloat(ohum);
+
+
+				updateTemperatureGauge(ifloatTemperature);
+				updateHumidityGauge(ifloatHumidity);
+				updateTemperatureGauge1(ofloatTemperature);
+				updateHumidityGauge1(ofloatHumidity);
+
+
+				console.log(ifloatTemperature);
+				console.log(ifloatHumidity);
+				console.log(ofloatTemperature);
+				console.log(ofloatHumidity);
+			});
+			connection.start().then(function () {
+				console.log("SignalR connected");
+			}).catch(function (err) {
+				return console.error(err.toString());
+			});
+
+			setInterval(getSensorData, 5000);
+			function getSensorData() {
+				$.ajax({
+					type: "POST",
+					url: "/Home/GetSensorData",
+					success: function (result) {
+						console.log("Sensor data retrieved successfully.");
+					},
+					error: function (error) {
+						console.error("Failed to retrieve sensor data.", error);
+					}
+				});
+			}
+		});
+	</script>
+
+	<div id="responseContainer"></div>
+
+	@section scripts {
+		<script>
+			function getChatGptResponse() {
+				var userMessage = document.getElementById('userMessage').value;
+
+				$.ajax({
+					type: 'POST',
+					url: '/Home/GetChatGptResponse',
+					contentType: 'application/json',
+					data: JSON.stringify(userMessage),
+					success: function (data) {
+						document.getElementById('responseContainer').innerHTML = data.assistantResponse;
+					},
+					error: function (error) {
+						console.error(error);
+					}
+				});
+			}
+
+		</script>
+	}
+</body>
+</html>

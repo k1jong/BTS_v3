@@ -1,0 +1,581 @@
+﻿@using System.Globalization
+@model IEnumerable<WMAHUData>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script>document.addEventListener('contextmenu', event => event.preventDefault());</script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR&display=swap" rel="stylesheet">
+	<title>공조기 대시보드</title>
+	<style>
+		/*드롭다운*/
+		.moveToSpecificPosition1 {
+			position: absolute;
+			top: 70px; /* Adjust this value based on your layout */
+			left: 80px; /* Adjust this value based on your layout */
+			color: black;
+			
+		}
+		/*엑셀*/
+		.moveToSpecificPosition2 {
+			position: absolute;
+			top: 70px; /* Adjust this value based on your layout */
+			left: 1010px; /* Adjust this value based on your layout */
+			color: black;
+			
+		}
+		/*온.습도 반환*/
+		.moveToSpecificPosition3 {
+			position: absolute;
+			top: 155px; /* Adjust this value based on your layout */
+			left: 80px; /* Adjust this value based on your layout */
+			color: black;
+			
+		}
+		/*전날 전달 대비 차이*/
+		.moveToSpecificPosition4 {
+			position: absolute;
+			top: 155px; /* Adjust this value based on your layout */
+			left: 1010px; /* Adjust this value based on your layout */
+			color: black;
+			z-index: -1; /* Set a higher z-index to ensure it appears above other elements */
+		}
+		/*반환-공급*/
+		.moveToSpecificPosition5 {
+			position: absolute;
+			top: 540px; /* Adjust this value based on your layout */
+			left: 80px; /* Adjust this value based on your layout */
+			color: black;
+			z-index: -1; /* Set a higher z-index to ensure it appears above other elements */
+		}
+		/*작동상태*/
+		.moveToSpecificPosition6 {
+			position: absolute;
+			top: 540px; /* Adjust this value based on your layout */
+			left: 1010px; /* Adjust this value based on your layout */
+			color: black;
+			z-index: -1; /* Set a higher z-index to ensure it appears above other elements */
+		}
+
+		/*드롭다운 크기*/
+		.custom-card1 {
+			width: 920px;
+			height: 70px;
+		}
+		/*엑셀 크기*/
+		.custom-card2 {
+			width: 870px;
+			height: 70px;
+		}
+		/*온.습도 반환*/
+		.custom-card3 {
+			width: 920px;
+			height: 370px;
+		}
+		/*전날 전달 대비 차이*/
+		.custom-card4 {
+			width: 870px;
+			height: 370px;
+		}
+		/*반환-공급*/
+		.custom-card5 {
+			width: 920px;
+			height: 400px;
+		}
+		/*작동상태*/
+		.custom-card6 {
+			width: 870px;
+			height: 400px;
+		}
+
+		/*폰트 스타일*/
+		.noto-serif-text {
+			font-family: 'NanumGothic', serif;
+			/* 다른 스타일들도 여기에 추가할 수 있습니다. */
+		}
+	</style>
+</head>
+@{
+	Dictionary<string, string> machineNames = new Dictionary<string, string>
+	{
+		{"A00", "AHU-01"},
+		{"A01", "AHU-02"},
+		{"A02", "AHU-03"},
+		{"A03", "AHU-04A"},
+		{"A04", "AHU-04B"},
+		{"A05", "AHU-05"},
+		{"A06", "AHU-06"},
+		{"A07", "AHU-07"},
+		{"A08", "AHU-08"},
+		{"A09", "AHU-09"},
+		{"A10", "AHU-10"}
+	};
+}
+
+<body>
+	@*드롭다운*@
+	<div class=" moveToSpecificPosition1">
+		<div class="row">
+			<div class="col">
+				<div class="custom-card1" style="background-color: white; color : black; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-body" style="font-size : 24px; margin-left : 20px;">
+						<strong>Set:</strong>
+						<span >
+							@{
+								var dataType = ViewBag.SelectedDataType;
+								if (dataType == "temperature")
+								{
+									<text>온도</text>
+								}
+								else if (dataType == "humidity")
+								{
+									<text>습도</text>
+								}
+							}
+						</span>
+						<strong style="margin-left: 20px;">조회일자:</strong> <span>@ViewBag.SelectedDate</span>
+						<strong style="margin-left: 20px;">공조기 번호:</strong>
+						<span>
+							@{
+								var selectedAhuKey = ViewBag.SelectedAhu;
+								var selectedAhuName = string.Empty;
+
+								if (!string.IsNullOrEmpty(selectedAhuKey) && machineNames.ContainsKey(selectedAhuKey))
+								{
+									selectedAhuName = machineNames[selectedAhuKey];
+								}
+								else
+								{
+									// Handle the case when selectedAhuKey is null or not found in the dictionary
+									selectedAhuName = "";
+								}
+
+								@selectedAhuName
+							}
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	@*엑셀*@
+	<div class=" moveToSpecificPosition2">
+		<div class="row">
+			<div class="col">
+				<div class="custom-card2" style="background-color: white; color : black; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-body" stlye="">
+						<form method="get" action="@Url.Action("privacy", "Home")">
+							<label for="selectedDataType" style="font-size : 20px; font-weight : bold">설정:</label>
+							<select id="selectedDataType" name="selectedDataType" style="font-size : 20px;">
+								<option value="temperature">온도</option>
+								<option value="humidity">습도</option>
+							</select>
+
+							<label for="selectedDate" style="font-size : 20px; font-weight : bold">조회일자:</label>
+							<select id="selectedDate" name="selectedDate" style="font-size : 20px;">
+								@foreach (var date in ViewBag.AvailableDates)
+								{
+									<option value="@date">@DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd")</option>
+								}
+							</select>
+
+							<label for="selectedAhu" style="font-size : 20px; font-weight : bold">공조기 번호:</label>
+							<select id="selectedAhu" name="selectedAhu" style="font-size : 20px;">
+								@foreach (var machine in machineNames)
+								{
+									<option value="@machine.Key">@machine.Value</option>
+								}
+							</select>
+
+							<script>
+								// JavaScript code to update the dropdown based on the selected machine
+								document.getElementById("selectedAhu").addEventListener("change", function () {
+									var selectedMachine = this.value;
+									// You can use selectedMachine to perform additional actions or update other parts of the page as needed
+									console.log("Selected Machine: " + selectedMachine);
+								});
+							</script>
+
+							<button type="submit" style="font-size : 20px">조회하기</button>
+
+							<a href="@Url.Action("ExportToExcel", new { selectedDate = ViewBag.SelectedDate, selectedAhu = ViewBag.SelectedAhu, selectedDataType = ViewBag.SelectedDataType })" class="btn btn-primary" style="margin : 0px 0px 7px 10px">Excel Download</a>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	@*온.습도 반환*@
+	<div class=" moveToSpecificPosition3">
+		<div class="row">
+			<div class="col">
+				<div class="custom-card3" style="background-color: white; color : black; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-header py-2">
+						<a style="font-family : 'NanumGothic', serif; font-size : 18px; font-weight : bold;">온.습도 반환 설정 외부</a>
+					</div>
+					<div class="card-body">
+							<div id="myDiv"></div>
+							<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+							<script>
+								// 선택된 날짜와 공조기 번호를 가져옴
+								var selectedDate = "@(ViewBag.SelectedDate ?? Model.Select(c => DateTime.ParseExact(c.Run_datetime, "yyyyMMddHHmmss", CultureInfo.InvariantCulture).Date).OrderBy(d => d).FirstOrDefault().ToString("yyyyMMdd"))";
+								var selectedAhu = "@(ViewBag.SelectedAhu ?? "A00")";
+
+								// 선택된 데이터 유형 (온도 또는 습도) 가져오기
+								var selectedDataType = "@(ViewBag.SelectedDataType ?? "temperature")";
+
+								// 온도 또는 습도에 따라 레이블과 데이터 설정
+								var labels, datasetLabel, datasetSet, datasetRet, datasetSup, datasetOut;
+								if (selectedDataType === "temperature") {
+									labels = @Html.Raw(Json.Serialize(Model.Select(c => DateTime.ParseExact(c.Run_datetime, "yyyyMMddHHmmss", CultureInfo.InvariantCulture).ToString("HH:mm"))));
+									datasetLabel = '온도';
+									datasetSet = @Html.Raw(Json.Serialize(Model.Select(c => c.Ahu_set_temp)));
+									datasetRet = @Html.Raw(Json.Serialize(Model.Select(c => c.Ahu_ret_temp)));
+									datasetSup = @Html.Raw(Json.Serialize(Model.Select(c => c.Ahu_sup_temp)));
+									datasetOut = @Html.Raw(Json.Serialize(Model.Select(c => c.Ahu_out_temp)));
+								} else if (selectedDataType === "humidity") {
+									labels = @Html.Raw(Json.Serialize(Model.Select(c => DateTime.ParseExact(c.Run_datetime, "yyyyMMddHHmmss", CultureInfo.InvariantCulture).ToString("HH:mm"))));
+									datasetLabel = '습도';
+									datasetSet = @Html.Raw(Json.Serialize(Model.Select(c => c.Ahu_set_hum)));
+									datasetRet = @Html.Raw(Json.Serialize(Model.Select(c => c.Ahu_ret_hum)));
+									datasetSup = @Html.Raw(Json.Serialize(Model.Select(c => c.Ahu_sup_hum)));
+									datasetOut = @Html.Raw(Json.Serialize(Model.Select(c => c.Ahu_out_hum)));
+								}
+
+								var traceSet = {
+									x: labels,
+									y: datasetSet,
+									mode: 'lines',
+									name: '설정 ' + datasetLabel,
+									line: {
+										color: 'rgb(75, 192, 192)', // 예: 녹색
+										width: 3
+									}
+								};
+
+								var traceRet = {
+									x: labels,
+									y: datasetRet,
+									mode: 'lines',
+									name: 'Ret' + datasetLabel,
+									line: {
+										color: 'rgb(255, 99, 132)', // 예: 빨간색
+										width: 3
+									}
+								};
+
+								var traceSup = {
+									x: labels,
+									y: datasetSup,
+									mode: 'lines',
+									name: 'Sup ' + datasetLabel,
+									line: {
+										color: 'rgb(0, 0, 255)', // 예: 파란색
+										width: 3
+									}
+								};
+
+								var traceOut = {
+									x: labels,
+									y: datasetOut,
+									mode: 'lines',
+									name: 'Out ' + datasetLabel,
+									line: {
+										color: 'rgb(255, 165, 0)', // 예: 주황색
+										width: 3
+									}
+								};
+
+								var layout = {
+									title: datasetLabel,
+									width:888,
+									height:300,
+								xaxis: {
+									tickvals: ['00:00',    '04:00',   '08:00',   '12:00', '16:00',  '20:00',  '23:00'], 
+									ticktext: ['00:00',    '04:00',   '08:00',   '12:00', '16:00',  '20:00',  '23:00']
+								},
+									yaxis: {
+										title: datasetLabel,
+										range: [0, Math.max(...datasetSet, ...datasetRet, ...datasetSup, ...datasetOut) * 1.1], 
+									}
+								};
+
+								var plotData = [traceSet, traceRet, traceSup, traceOut];
+
+								Plotly.newPlot('myDiv', plotData, layout);
+							</script>
+						</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	@*(전날, 전달) 대비 차이*@
+	<div class=" moveToSpecificPosition4">
+		<div class="row">
+			<div class="col">
+				<div class="custom-card4" style="background-color: white; color : black; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-header py-2">
+						<a style="font-family : 'NanumGothic', serif; font-size : 18px; font-weight : bold;">Ret-Sup 차이 및 공조팬 주파수</a>
+					</div>
+					<div class="card-body">
+						<div id="mySecondDiv"></div>
+						<script>
+							var selectedDateForSecondChart = selectedDate;
+							var selectedAhuForSecondChart = selectedAhu;
+
+							var secondChartLabel;
+							var secondChartDifferenceData;
+
+							if (selectedDataType === "temperature") {
+								secondChartLabel = 'Ret 온도 - Sup 온도 차이';
+								secondChartDifferenceData = @Html.Raw(Json.Serialize(Model.Select(c => c.Ahu_ret_temp - c.Ahu_sup_temp)));
+							} else if (selectedDataType === "humidity") {
+								secondChartLabel = 'Ret 습도 - Sup 습도 차이';
+								secondChartDifferenceData = @Html.Raw(Json.Serialize(Model.Select(c => c.Ahu_ret_hum - c.Ahu_sup_hum)));
+							}
+
+							var invSetFreqData = @Html.Raw(Json.Serialize(ViewBag.InvSetFreqData));
+							var invSetFreqValues = invSetFreqData.map(function (item) {
+								return item.inv_set_freq;
+							});
+
+							var traceDifference = {
+								x: labels,
+								y: secondChartDifferenceData,
+								mode: 'lines',
+								name: secondChartLabel,
+								line: {
+									color: 'rgb(255, 99, 132)',
+									width: 2
+								}
+							};
+
+							var traceInvSetFreq = {
+								x: labels,
+								y: invSetFreqValues,
+								mode: 'lines',
+								name: '공조팬 주파수',
+								line: {
+									color: 'rgb(75, 192, 192)',
+									width: 2
+								}
+							};
+
+							var layoutSecond = {
+								title: secondChartLabel,
+								width: 800,
+								height: 300,
+								xaxis: {
+									title: '날짜',
+									tickvals: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '23:00'],
+									ticktext: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '23:00']
+								},
+								yaxis: {
+									title: secondChartLabel,
+									range: [Math.min(...secondChartDifferenceData, ...invSetFreqValues) * 1.1, Math.max(...secondChartDifferenceData, ...invSetFreqValues) * 1.1]
+								}
+							};
+
+							var plotDataSecond = [traceDifference, traceInvSetFreq];
+
+							Plotly.newPlot('mySecondDiv', plotDataSecond, layoutSecond);
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	@*반환 – 공급, 공조기팬 주파수*@
+	<div class=" moveToSpecificPosition5">
+		<div class="row">
+			<div class="col">
+				<div class="custom-card5" style="background-color: white; color : black; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-header py-2">
+						<a style="font-family : 'NanumGothic', serif; font-size : 18px; font-weight : bold;">Ret–Sup </a>
+					</div>
+					<div class="card-body">
+						<div id="myThirdDiv"></div>
+						<script>
+							var thirdChartLabel;
+							var thirdChartDifferenceData;
+
+							if (selectedDataType === "temperature") {
+								thirdChartLabel = 'Ret 온도 - Sup 온도 차이';
+								thirdChartDifferenceData = @Html.Raw(Json.Serialize(Model.Select(c => c.Ahu_ret_temp - c.Ahu_set_temp)));
+							} else if (selectedDataType === "humidity") {
+								thirdChartLabel = 'Ret 습도 - Sup 습도 차이';
+								thirdChartDifferenceData = @Html.Raw(Json.Serialize(Model.Select(c => c.Ahu_ret_hum - c.Ahu_set_hum)));
+							}
+
+							var traceThird = {
+								x: labels,
+								y: thirdChartDifferenceData,
+								mode: 'lines',
+								name: thirdChartLabel,
+								line: {
+									color: 'rgb(255, 99, 132)',
+									width: 2
+								}
+							};
+
+							var layoutThird = {
+								title: thirdChartLabel,
+								width: 888,
+								height: 300,
+								xaxis: {
+									title: '날짜',
+									tickvals: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '23:00'],
+									ticktext: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '23:00']
+								},
+								yaxis: {
+									title: thirdChartLabel,
+									range: [Math.min(...thirdChartDifferenceData) * 1.1, Math.max(...thirdChartDifferenceData) * 1.1]
+								}
+							};
+
+							var plotDataThird = [traceThird];
+
+							Plotly.newPlot('myThirdDiv', plotDataThird, layoutThird);
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	@*작동상태*@
+	<div class=" moveToSpecificPosition6">
+		<div class="row">
+			<div class="col">
+				<div class="custom-card6" style="background-color: white; color : black; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-header py-2">
+						<a style="font-family : 'NanumGothic', serif; font-size : 18px; font-weight : bold;">
+							전날 대비 온도차
+						</a>
+					</div>
+					<div class="card-body">
+						<!-- 테이블 생성 -->
+						<table id="dataTable" class="table" style="background-color : white;">
+							<thead>
+								<tr>
+									<th>시간</th>
+									<th>Ret @((ViewBag.SelectedDataType == "humidity") ? "습도" : "온도") - Sup @((ViewBag.SelectedDataType == "humidity") ? "습도" : "온도") 차이</th>
+									<th>Ret @((ViewBag.SelectedDataType == "humidity") ? "습도" : "온도") - Set @((ViewBag.SelectedDataType == "humidity") ? "습도" : "온도") 차이</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var item in Model)
+								{
+									<tr>
+										<td>@DateTime.ParseExact(item.Run_datetime, "yyyyMMddHHmmss", CultureInfo.InvariantCulture).ToString("yyyy년 MM월 dd일 HH시 mm분")</td>
+										<td>@((ViewBag.SelectedDataType == "humidity") ? (item.Ahu_ret_hum - item.Ahu_sup_hum) : (item.Ahu_ret_temp - item.Ahu_sup_temp))</td>
+										<td>@((ViewBag.SelectedDataType == "humidity") ? (item.Ahu_ret_hum - item.Ahu_set_hum) : (item.Ahu_ret_temp - item.Ahu_set_temp))</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+
+						<script>
+							// 테이블 업데이트 함수
+							function updateTable() {
+								// 선택된 데이터 유형 (온도 또는 습도) 가져오기
+								var selectedDataType = "@(ViewBag.SelectedDataType ?? "temperature")";
+
+								// 테이블 데이터를 업데이트할 레이블 및 데이터 설정
+								var tableLabels, tableDifference1, tableDifference2;
+								if (selectedDataType === "temperature") {
+									tableLabels = @Html.Raw(Json.Serialize(Model
+										.Where(c => int.Parse(c.Run_datetime.Substring(8, 2)) >= 10 && int.Parse(c.Run_datetime.Substring(8, 2)) <= 17)
+										.Select(c => DateTime.ParseExact(c.Run_datetime, "yyyyMMddHHmmss", CultureInfo.InvariantCulture).ToString("yyyy년 MM월 dd일 HH시"))));
+									tableDifference1 = @Html.Raw(Json.Serialize(Model
+										.Where(c => int.Parse(c.Run_datetime.Substring(8, 2)) >= 10 && int.Parse(c.Run_datetime.Substring(8, 2)) <= 17)
+										.Select(c => c.Ahu_ret_temp - c.Ahu_sup_temp)));
+									tableDifference2 = @Html.Raw(Json.Serialize(Model
+										.Where(c => int.Parse(c.Run_datetime.Substring(8, 2)) >= 10 && int.Parse(c.Run_datetime.Substring(8, 2)) <= 17)
+										.Select(c => c.Ahu_ret_temp - c.Ahu_set_temp)));
+								} else if (selectedDataType === "humidity") {
+									tableLabels = @Html.Raw(Json.Serialize(Model
+										.Where(c => int.Parse(c.Run_datetime.Substring(8, 2)) >= 10 && int.Parse(c.Run_datetime.Substring(8, 2)) <= 17)
+										.Select(c => DateTime.ParseExact(c.Run_datetime, "yyyyMMddHHmmss", CultureInfo.InvariantCulture).ToString("yyyy년 MM월 dd일 HH시"))));
+									tableDifference1 = @Html.Raw(Json.Serialize(Model
+										.Where(c => int.Parse(c.Run_datetime.Substring(8, 2)) >= 10 && int.Parse(c.Run_datetime.Substring(8, 2)) <= 17)
+										.Select(c => c.Ahu_ret_hum - c.Ahu_sup_hum)));
+									tableDifference2 = @Html.Raw(Json.Serialize(Model
+										.Where(c => int.Parse(c.Run_datetime.Substring(8, 2)) >= 10 && int.Parse(c.Run_datetime.Substring(8, 2)) <= 17)
+										.Select(c => c.Ahu_ret_hum - c.Ahu_set_hum)));
+								}
+
+								// 테이블 업데이트
+								var tableBody = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+								tableBody.innerHTML = '';
+
+								// 그룹화된 시간 데이터를 생성
+								var groupedData = {};
+								for (var i = 0; i < tableLabels.length; i++) {
+									if (!groupedData[tableLabels[i]]) {
+										groupedData[tableLabels[i]] = {
+											diff1: [tableDifference1[i]],
+											diff2: [tableDifference2[i]]
+										};
+									} else {
+										groupedData[tableLabels[i]].diff1.push(tableDifference1[i]);
+										groupedData[tableLabels[i]].diff2.push(tableDifference2[i]);
+									}
+								}
+
+								for (var key in groupedData) {
+									if (groupedData.hasOwnProperty(key)) {
+										var row = tableBody.insertRow(tableBody.rows.length);
+										var cell0 = row.insertCell(0);
+										var cell1 = row.insertCell(1);
+										var cell2 = row.insertCell(2);
+
+										cell0.innerHTML = key;
+										cell1.innerHTML = formatCellValue(calculateDailyDifference(groupedData, key, 'diff1'));
+										cell2.innerHTML = formatCellValue(calculateDailyDifference(groupedData, key, 'diff2'));
+									}
+								}
+							}
+
+							// 값에 따라 기호 및 색상을 추가하는 함수
+							function formatCellValue(value) {
+								if (value > 0) {
+									return '<span style="color: red;">↑+ ' + value + '</span>';
+								} else if (value < 0) {
+									return '<span style="color: blue;">↓- ' + Math.abs(value) + '</span>';
+								} else {
+									return '0';
+								}
+							}
+
+							// 배열의 평균을 계산하는 함수
+							function calculateAverage(array) {
+								var sum = array.reduce(function (a, b) { return a + b; }, 0);
+								return (sum / array.length).toFixed(2);
+							}
+
+							// 전날 대비 차이를 계산하는 함수
+							function calculateDailyDifference(groupedData, key, dataType) {
+								var currentIndex = Object.keys(groupedData).indexOf(key);
+								var previousIndex = currentIndex - 1;
+
+								if (previousIndex >= 0 && groupedData[key] && groupedData[Object.keys(groupedData)[previousIndex]]) {
+									var currentAverage = parseFloat(calculateAverage(groupedData[key][dataType]));
+									var previousAverage = parseFloat(calculateAverage(groupedData[Object.keys(groupedData)[previousIndex]][dataType]));
+									return (currentAverage - previousAverage).toFixed(2);
+								} else {
+									return "";
+								}
+							}
+
+							// 페이지 로드 시 테이블 업데이트
+							updateTable();
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

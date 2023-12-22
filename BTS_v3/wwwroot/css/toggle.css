@@ -1,0 +1,56 @@
+﻿.custom-checkbox {
+    position: absolute;
+    visibility: hidden;
+}
+
+.custom-label {
+    display: block;
+    position: absolute;
+    width: 60px;
+    height: 34px;
+    border-radius: 17px;
+    background-color: #ddd;
+    transition-duration: 0.2s;
+    /* 위치 조정 */
+}
+
+    .custom-label span {
+        position: absolute;
+        left: 3px;
+        top: 3px;
+        z-index: 1;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background-color: #fff;
+        transition-duration: 0.2s;
+    }
+
+    .custom-label:before,
+    .custom-label:after {
+        position: absolute;
+        top: 0;
+        width: 34px;
+        font-size: 11px;
+        line-height: 34px;
+        color: #fff;
+        text-align: center;
+    }
+
+    .custom-label:before {
+        left: 0;
+        content: 'ON';
+    }
+
+    .custom-label:after {
+        right: 0;
+        content: 'OFF';
+    }
+
+.custom-checkbox:checked + .custom-label {
+    background-color: #00c73c;
+}
+
+    .custom-checkbox:checked + .custom-label span {
+        transform: translateX(26px);
+    }

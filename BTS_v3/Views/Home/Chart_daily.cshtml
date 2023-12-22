@@ -1,0 +1,354 @@
+﻿@using System.Globalization;
+@model IEnumerable<dynamic>
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script>document.addEventListener('contextmenu', event => event.preventDefault());</script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR&display=swap" rel="stylesheet">
+	<title>전력량 비교</title>
+	<style>
+		/*드롭다운*/
+		.moveToSpecificPosition1 {
+			position: absolute;
+			top: 70px; /* Adjust this value based on your layout */
+			left: 80px; /* Adjust this value based on your layout */
+			color: black;
+			
+		}
+		/*부하게이지*/
+		.moveToSpecificPosition2 {
+			position: absolute;
+			top: 150px; /* Adjust this value based on your layout */
+			left: 1290px; /* Adjust this value based on your layout */
+			color: black;
+			
+		}
+		/*일별그래프*/
+		.moveToSpecificPosition3 {
+			position: absolute;
+			top: 150px; /* Adjust this value based on your layout */
+			left: 80px; /* Adjust this value based on your layout */
+			color: black;
+			
+		}
+		/*부하 표*/
+		.moveToSpecificPosition4 {
+			position: absolute;
+			top: 610px; /* Adjust this value based on your layout */
+			left: 80px; /* Adjust this value based on your layout */
+			color: black;
+			
+		}
+
+		/*엑셀*/
+		.moveToSpecificPosition7 {
+			position: absolute;
+			top: 70px; /* Adjust this value based on your layout */
+			left: 1290px; /* Adjust this value based on your layout */
+			color: black;
+			
+		}
+		/*드롭다운*/
+		.custom-card1 {
+			width: 400px;
+			height: 70px;
+		}
+		/*부하게이지*/
+		.custom-card2 {
+			width: 600px;
+			height: 790px;
+		}
+		/*일별그래프*/
+		.custom-card3 {
+			width: 1200px;
+			height: 450px;
+		}
+		/*부하 표*/
+		.custom-card4 {
+			width: 1200px;
+			height: 330px;
+		}
+
+		/*엑셀*/
+		.custom-card7 {
+			width: 600px;
+			height: 70px;
+		}
+		/*글자 폰트*/
+		.noto-serif-text {
+			font-family: 'NanumGothic', serif;
+			/* 다른 스타일들도 여기에 추가할 수 있습니다. */
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 20px;
+			background-color : white;
+		}
+
+		th, td {
+			border: 1px solid #ddd;
+			padding: 8px;
+			text-align: center;
+		}
+
+		th {
+			background-color: #f2f2f2;
+		}
+
+		.total-row {
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+	@*드롭다운*@
+	<div class=" moveToSpecificPosition1">
+		<div class="row">
+			<div class="col">
+				<div class="custom-card1" style="background-color: white; color : black; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-body" style="font-size : 20px; font-weight : bold; margin : 0px 0px 0px 20px; ">
+						@ViewBag.Date
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	@*부하게이지*@
+	<div class=" moveToSpecificPosition2">
+		<div class="row">
+			<div class="col">
+				<div class="custom-card2" style="background-color: white; color : black; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-header py-2">
+						<a style="font-family : 'NanumGothic', serif; font-size : 18px; font-weight : bold;">부하게이지</a>
+					</div>
+					<div class="card-body">
+						<div id="myDiv2"></div>
+						<div id="myDiv3"></div>
+						<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+						<script>
+							var liOverData = @ViewBag.liOverData;
+							var midOverData = @ViewBag.midOverData;
+							var HiOverData = @ViewBag.HiOverData;
+
+							var totalData = liOverData + midOverData + HiOverData;
+
+							var data = [{
+								values: [liOverData / totalData * 100, midOverData / totalData * 100, HiOverData / totalData * 100],
+								labels: ['경부하', '중부하', '과부하'],
+								type: 'pie',
+								textinfo: 'label+percent',
+								textposition: 'inside',
+								hoverinfo: 'label+percent+name',
+								hole: .4,
+								marker: {
+									colors: ['rgb(75, 192, 192)', 'rgb(255, 99, 132)', 'rgb(255, 165, 0)']
+								}
+							}];
+
+							var layout = {
+								title: '@ViewBag.Date 부하별 비율',
+								height: 350,
+								width: 550,
+								paper_bgcolor: 'rgba(255, 255, 255, 1)', // 흰색으로 변경
+								plot_bgcolor: 'rgba(255, 255, 255, 1)', // 흰색으로 변경
+								showlegend: true
+							};
+
+							Plotly.newPlot('myDiv2', data, layout);
+						</script>
+
+
+						<script>
+							var liOverData = @ViewBag.liOverData1;
+							var midOverData = @ViewBag.midOverData1;
+							var HiOverData = @ViewBag.HiOverData1;
+
+							var totalData = liOverData + midOverData + HiOverData;
+
+							var data = [{
+								values: [liOverData / totalData * 100, midOverData / totalData * 100, HiOverData / totalData * 100],
+								labels: ['경부하', '중부하', '과부하'],
+								type: 'pie',
+								textinfo: 'label+percent',
+								textposition: 'inside',
+								hoverinfo: 'label+percent+name',
+								hole: .4,
+								marker: {
+									colors: ['rgb(75, 192, 192)', 'rgb(255, 99, 132)', 'rgb(255, 165, 0)']
+								}
+							}];
+
+							var layout = {
+								title: '전날 부하별 비율',
+								height: 350,
+								width: 550,
+								paper_bgcolor: 'rgba(255, 255, 255, 1)', // 흰색으로 변경
+								plot_bgcolor: 'rgba(255, 255, 255, 1)', // 흰색으로 변경
+								showlegend: true
+							};
+
+							Plotly.newPlot('myDiv3', data, layout);
+						</script>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	@*일별그래프*@
+	<div class=" moveToSpecificPosition3">
+		<div class="row">
+			<div class="col">
+				<div class="custom-card3" style="background-color: white; color : black; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-header py-2">
+						<a style="font-family : 'NanumGothic', serif; font-size : 18px; font-weight : bold;">일간그래프</a>
+					</div>
+					<div class="card-body">
+						<div id="myDiv"></div>
+						<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+						@{
+							var chartDataJson = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
+							var previousChartDataJson = ViewBag.PreviousChartDataJson;
+						}
+						<script>
+							var chartData = @Html.Raw(chartDataJson);
+							var previousChartData = @Html.Raw(previousChartDataJson);
+							
+							var formatTime = function (dateString) {
+								var date = new Date(
+									dateString.substr(0, 4),   // year
+									parseInt(dateString.substr(4, 2)) - 1,   // month (zero-based)
+									dateString.substr(6, 2),   // day
+									dateString.substr(8, 2),   // hour
+									dateString.substr(10, 2),  // minute
+									0, 0);   // second
+								return ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2);
+							};
+
+							var data = [
+								{
+									x: @Html.Raw(Json.Serialize(Model.Select(c => DateTime.ParseExact(c.Date, "yyyyMMddHHmm", CultureInfo.InvariantCulture).ToString("HH:mm")))),
+									y: chartData.map(c => c.TotalLpData),
+									type: 'scatter',	
+									mode: 'lines',
+									name: '@ViewBag.Date',
+									line: {
+										color: 'rgb(75, 192, 192)',
+										width: 2
+									}
+								},
+								{
+									x: previousChartData.map(c => formatTime(c.Date)),
+									y: previousChartData.map(c => c.TotalLpData),
+									type: 'scatter',
+									mode: 'lines',
+									name:  '전날',
+									line: {
+										color: 'rgb(255, 0, 0)',
+										width: 2
+									}
+								}
+							];
+
+							var layout = {
+								title: '사용량',
+								height: 380,
+								xaxis: {
+									title: '날짜',
+									tickvals: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '23:00'],
+									ticktext: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '23:00']
+								},
+								yaxis: {
+									title: '사용량',
+									rangemode: 'tozero'
+								}
+							};
+
+							Plotly.newPlot('myDiv', data, layout);
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	@*부하표*@
+	<div class=" moveToSpecificPosition4">
+		<div class="row">
+			<div class="col">
+				<div class="custom-card4" style="background-color: white; color : black; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-header py-2">
+						<a style="font-family : 'NanumGothic', serif; font-size : 18px; font-weight : bold;">부하표</a>
+					</div>
+					<div class="card-body">
+						@{
+							var seasons = new[]
+							{
+						new { Season = "여름철", OffPeak = "23~09시", MidPeak = "09~10시, 12~13시, 17~23시", Peak = "10~12시, 13~17시" },
+						new { Season = "봄 · 가을철", OffPeak = "23~09시", MidPeak = "09~10시, 12~13시, 17~23시", Peak = "10~12시, 13~17시" },
+						new { Season = "겨울철", OffPeak = "23~09시", MidPeak = "09~10시, 12~17시, 20~22시", Peak = "10~12시, 13~20시, 22~23시" }
+										};
+						}
+						<table class="table">
+							<thead>
+								<tr>
+									<th>계절</th>
+									<th>경부하</th>
+									<th>중간부하</th>
+									<th>최대부하</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var season in seasons)
+								{
+									<tr>
+										<td>@season.Season</td>
+										<td>@season.OffPeak</td>
+										<td>@season.MidPeak</td>
+										<td>@season.Peak</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	@*엑셀*@
+	<div class=" moveToSpecificPosition7">
+		<div class="row">
+			<div class="col">
+				<div class="custom-card7" style="background-color: white; color : black; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+					<div class="card-body" style="font-size : 20px; font-weight : bold">
+						일자 : 
+						<select id="dateSelect">
+							@foreach (var date in ViewBag.Dates)
+							{
+								<option value="@date.Value">@date.Text</option>
+							}
+						</select>
+
+						<button onclick="goToDatePage()">조회하기</button>
+
+						<script>
+							function goToDatePage() {
+								var selectedDate = document.getElementById('dateSelect').value;
+								if (selectedDate) {
+									window.location.href = '/Home/Chart_daily?date=' + selectedDate;
+								}
+							}
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,206 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+}
+
+ul, li {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+#layerPopup {
+    display: none;
+}
+
+    #layerPopup + label {
+        display: inline-block;
+        padding: 7px 14px;
+        background: #333;
+        color: #fff;
+    }
+
+#layer_bg {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height :1400px;
+    background: rgba(0,0,0,0.5);
+    z-index: 1;
+}
+
+    #layer_bg > #popup {
+        position: absolute;
+        padding: 15px;
+        box-sizing: border-box;
+        border-radius: 15px;
+        top: 50%;
+        left: 68%;
+        transform: translate(-50%, -50%);
+        width: 1080px;
+        height: 850px;
+        background: #fff;
+        box-shadow: 7px 7px 5px rgba(0,0,0,0.2);
+    }
+
+        #layer_bg > #popup > h2 {
+            margin-bottom: 25px;
+        }
+
+            #layer_bg > #popup > h2 > label {
+                float: right;
+            }
+
+#layerPopup:checked + label + #layer_bg {
+    display: block;
+}
+
+#popup {
+    position: relative;
+    font-family: arial;
+    color: black;
+    font-weight: bold;
+    z-index: 100;
+}
+/* popuphead 위치 */
+#popuphead {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 10px 0px 10px 20px; /* 위, 오른쪽, 아래, 왼쪽 */
+    border: 2px solid gray;
+}
+/* X 위치 */
+#closePopup {
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    margin: 10px 20px 10px 0px; /* 위, 오른쪽, 아래, 왼쪽 */
+}
+/* popup공조기 사진 */
+#popup img {
+    width: 100%; /* 이미지의 가로 크기를 현재 컨테이너의 80%로 설정 */
+    height: auto; /* 세로 크기를 자동으로 조절하여 비율을 유지 */
+}
+/* 온/습도 차트 전체 그룹 */
+.chartview {
+    position: absolute; /* 절대 위치로 설정 */
+}
+/*설정하기 버튼*/
+.login-btn-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+    .login-btn-wrap .login-btn {
+        width: 100px;
+        height: 60px;
+        color: white;
+        border: 0;
+        border-radius: 4px;
+        background: rgb(0,0,0); /*background: linear-gradient(162deg, rgba(105,163,255,1) 0%, rgba(43,125,254,1) 50%, rgba(43,125,254,1) 100%);*/
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: arial;
+        color: white;
+        margin-top: 20px;
+        margin-left : 120px;
+        font-size: 18px;
+    }
+
+
+/* 실시간 온/습도 차트 */
+.realtime {
+    width: 300px;
+    height: 300px;
+    border: 2px solid gray;
+    display: inline-block;
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 3%;
+    position: absolute;
+    left: 600px;
+    font-family: arial;
+    color: black;
+    font-weight: bold;
+}
+/* 실시간 온/습도 차트2 */
+.realtime2 {
+    width: 300px;
+    height: 300px;
+    border: 2px solid gray;
+    display: inline-block;
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 3%;
+    position: absolute;
+    left: 900px;
+    margin-left: 30px;
+    font-family: arial;
+    color: black;
+    font-weight: bold;
+}
+/* 온/습도 변화량 차트 */
+.change {
+    width: 630px;
+    height: 300px;
+    border: 2px solid gray; /* 예시로 테두리 색상을 빨간색으로 지정 */
+    display: inline-block; /* 필요에 따라 수정할 수 있습니다. */
+    margin-top: 30px; /* 여유 공간을 조절할 수 있습니다. */
+    background-color: white;
+    border-radius: 10px; /* 혹은 다른 값을 사용하여 조절 가능 */
+    position: absolute;
+    left: 600px;
+    top: 320px;
+    font-family: arial;
+    color: black;
+    font-weight: bold;
+}
+
+#popupimage img {
+    position: absolute;
+    right: 100px; /* 우측으로 100px 이동 */
+}
+
+/*우측 메뉴창*/
+.final {
+    width: 200px; /* 더 큰 가로 길이로 조절 */
+    margin: 20px;
+}
+/*온도 and 습도 박스*/
+.os {
+    border: 2px solid grey;
+    border-radius: 10px; /*모서리 둥글기*/
+    margin-top: 10px;
+    height: 60px; /* 높이 조절 */
+    font-size: 18px;
+    display: flex;
+    justify-content: space-between; /* 가로로 정렬 */
+    align-items: center;
+    padding: 0 10px; /* 좌우 여백 추가 */
+}
+/*온도와 습도의 그룹*/
+.bord {
+    margin-bottom: 20px;
+    font-size: 22px;
+}
+
+/*온도 습도*/
+.temperature,
+.humidity {
+    display: inline-block;
+    width: 90%; /* 온도와 습도의 가로 길이 조절 */
+}
+
+/*온도 °C command 습도 % 사이에 올 자리*/
+.unit {
+    font-size: 18px;
+    text-align: right;
+}

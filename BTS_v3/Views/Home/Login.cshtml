@@ -1,0 +1,188 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>로그인</title>
+    <link rel="icon" sizes=" 32x32" href="~/login.ico" />
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/51db22a717.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Alata&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #333333;
+        }
+
+        :root {
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .page-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .shadow {
+            -webkit-box-shadow: 27px 43px 43px -26px rgba(89,89,89,0.39);
+            -moz-box-shadow: 27px 43px 43px -26px rgba(89,89,89,0.39);
+            box-shadow: 27px 43px 43px -26px rgba(89,89,89,0.39);
+        }
+
+        .login-form-container {
+            background: #333333;
+            width: 700px;
+            height: 450px;
+            display: flex;
+            flex-direction: row;
+            box-shadow: 10px black;
+            border-radius: 10px;
+        }
+
+        .login-form-right-side {
+            width: 50%;
+            border-radius: 10px 0px 0px 10px;
+            padding: 75px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            background-image: radial-gradient(ellipse farthest-corner at 0 140%, black 5%, black 80%);
+        }
+
+            .login-form-right-side h1 {
+                color: white;
+                width: 100%;
+                text-align: right;
+                opacity: 0.9;
+            }
+
+            .login-form-right-side p {
+                padding-top: 50px;
+                font-size: 16px;
+                text-align: right;
+                opacity: 0.8;
+            }
+
+        .login-form-left-side {
+            width: 50%;
+            border-radius: 0px 10px 10px 0px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+            background: rgb(255,255,255);
+        }
+
+        .login-input-container {
+            padding-top: 120px;
+            width: 300px;
+        }
+
+            .login-input-container .login-input-wrap {
+                width: 300px;
+                height: 45px;
+                margin-top: 20px;
+                border-radius: 2px;
+                border-bottom: solid 2px lightblue;
+            }
+
+                .login-input-container .login-input-wrap i {
+                    color: lightblue;
+                    line-height: 45px;
+                }
+
+                .login-input-container .login-input-wrap input {
+                    background: none;
+                    border: none;
+                    line-height: 45px;
+                    padding-left: 10px;
+                    width: 267px;
+                }
+
+                    .login-input-container .login-input-wrap input:focus {
+                        outline: none;
+                    }
+
+        .login-btn-wrap {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+            .login-btn-wrap .login-btn {
+                width: 95px;
+                height: 35px;
+                color: black;
+                border: 0;
+                border-radius: 4px;
+                background: #ffffff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .login-btn-wrap a {
+                margin-top: 10px;
+                text-decoration: none;
+                font-size: 18px;
+                color: gray;
+            }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="login-form-container shadow">
+            <div class="login-form-right-side">
+                <div class="top-logo-wrap">
+                </div>
+                <h1 style="text-align: left; font-size: 25px">BestEnergySolution</h1>
+            </div>
+            <div class="login-form-left-side">
+                <form id="loginForm" action="#">
+                    <div class="login-input-container">
+                        <div class="login-input-wrap input-id">
+                            <i class="fa fa-user"></i>
+                            <input id="username" placeholder="아이디" type="text">
+                        </div>
+                        <div class="login-input-wrap input-password">
+                            <i class="fas fa-key"></i>
+                            <input id="password" placeholder="비밀번호" type="password">
+                        </div>
+                    </div>
+                    <div class="login-btn-wrap">
+                        <button type="button" class="login-btn" onclick="login()">로그인</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function login() {
+            var username = $('#username').val();
+            var password = $('#password').val();
+
+            // Check if the master ID and password are entered
+            if (username === 'master' && password === '1234') {
+                // Redirect to the Index action of the Home controller
+                window.location.href = '/Home/Index';
+            } else {
+                // Handle incorrect credentials (show an error message, etc.)
+                alert('로그인 정보를 확인해주세요!');
+            }
+        }
+    </script>
+</body>
+</html>

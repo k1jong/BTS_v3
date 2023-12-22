@@ -1,0 +1,320 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<link href="https://fo
+nts.googleapis.com/css2?family=Noto+Serif+KR&display=swap" rel="stylesheet">
+	<style>
+		/* layout제외 전체 레이아웃 */
+		#AllWrap {
+			position: absolute;
+			margin: 0px 0px 0px 60px;
+			top: 56px;
+			height: 896.5px;
+			width: 1860px;
+			box-sizing: border-box;
+			overflow: hidden; /* float 요소를 감싸기 위해 overflow 설정 */
+			padding: 10px 20px 10px 20px;
+		}
+
+		/* AllWrap안의 왼쪽 구역 */
+		.left-box {
+			width: 905px;
+			height: 100%; /* 100% - Header의 높이(4%) - 간격(2%) */
+			/* background-color: #ffcc00; /* 왼쪽 박스 배경색 */
+			float: left; /* 좌우로 나란히 배치 */
+			box-sizing: border-box;
+			display: flex; /* 내부 요소를 플렉스 컨테이너로 만듦 */
+			flex-direction: column; /* 내부 요소를 세로로 나열함 */
+		}
+			/* left-box 안의 div1, div2, div3 */
+			.left-box .inbox {
+				flex: 1; /* 동일한 비율로 높이를 나눔 */
+				box-sizing: border-box;
+				background-color: white;
+				margin-bottom: 12px; /* 간격 추가 */
+				border-top-left-radius: 10px;
+				border-top-right-radius: 10px;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			}
+
+				/* 마지막 div에는 추가 간격을 주지 않음 */
+				.left-box .inbox:last-child {
+					margin-bottom: 0;
+				}
+
+		/* AllWrap안의 오른쪽 구역 */
+		.right-box {
+			width: 902px; /* 총 길이 1810 */
+			height: 100%; /* 100% - Header의 높이(4%) - 간격(2%) */
+			/* background-color: #66ccff; /* 오른쪽 박스 배경색 */
+			box-sizing: border-box;
+			float: left; /* 좌우로 나란히 배치 */
+			display: flex; /* 내부 요소를 플렉스 컨테이너로 만듦 */
+			flex-direction: column; /* 내부 요소를 세로로 나열함 */
+			margin-left: 12px;
+		}
+			/* right-box 안의 div1, div2  */
+			.right-box .inbox {
+				flex : 1;
+				background-color: white; /* 노란색 */
+				box-sizing: border-box;
+				margin-bottom: 12px; /* 간격 추가 */
+				border-top-left-radius: 10px;
+				border-top-right-radius: 10px;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+				display: flex; /* Nested flex container for the chart items */
+				flex-direction: column; /* Arrange items vertically */
+			}
+
+				/* siramachart1의 headher 밑으로 내려가는 1,2,3,4개의 구역 들 */
+				.right-box .inbox > div[class^="siramachart"] {
+					/* text-align: center; */
+					padding: 10px;
+					box-sizing: border-box;
+				}
+
+					/* Remove the border from the last siramachart item */
+					.right-box .inbox > div[class^="siramachart"]:last-child {
+						border-bottom: none;
+					}
+
+				/* 마지막 div에는 추가 간격을 주지 않음 */
+				.right-box .inbox:last-child {
+					margin-bottom: 0;
+				}
+				/* siramachart의 header 부분 */
+				.right-box .inbox > div[class^="siramachart"] h2 {
+					font-family: 'NanumGothic', serif;
+					font-size: 18px;
+					font-weight: bold;
+					border-top-left-radius: 10px;
+					border-top-right-radius: 10px;
+					margin-bottom: 6px; /* Adjust as needed */
+				}
+
+				/* siramachart의 contents */
+				.right-box .inbox > div[class^="siramachart"] .chartcontent {
+					box-sizing: border-box;
+					flex: 1;
+				}
+
+		/* 차트 제목 쓰는 곳 */
+		.chartheader {
+			padding: 8px 16px 8px 16px;
+			font-family: 'NanumGothic', serif;
+			font-size: 18px;
+			font-weight: bold;
+			position: relative; /* Added to make the pseudo-element position relative to the .chartheader */
+			height: 43px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			background-color: rgba(0,0,0,.03);
+			border-top-left-radius: 10px;
+			border-top-right-radius: 10px;
+		}
+			/* 차트 제목 칸 밑줄 */
+			.chartheader::after {
+				content: ""; /* Add content to the pseudo-element */
+				display: block; /* Make it a block-level element to take the full width */
+				border-bottom: 1px solid rgba(0,0,0,.125); /* Specify the border style, color, and width */
+				width: 100%; /* Set the length of the underline (subtracting left padding) */
+				margin: 0 auto; /* Center the underline */
+				margin-top: 5px; /* Adjust the top margin as needed */
+				position: absolute; /* Position the underline relative to .chartheader */
+				left: 0; /* Align the underline to the left */
+				bottom: 0; /* Align the underline to the bottom */
+			}
+		/* sarimachart1~4까지의 chartcontent안에 있는 차트가 중앙으로 정렬되도록 */
+		.right-box .inbox .siramachart1 .chartcontent,
+		.right-box .inbox .siramachart2 .chartcontent,
+		.right-box .inbox .siramachart3 .chartcontent,
+		.right-box .inbox .siramachart4 .chartcontent {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		/* sarimachart1의 높이를 20%로 지정 */
+		.right-box .inbox .siramachart1 {
+			height: 20%;
+		}
+
+		/* sarimachart2의 높이를 30%로 지정 */
+		.right-box .inbox .siramachart2 {
+			height: 20%;
+		}
+
+		/* sarimachart3의 높이를 25%로 지정 */
+		.right-box .inbox .siramachart3 {
+			height: 18%;
+		}
+
+		/* sarimachart4의 높이를 40%로 지정 */
+		.right-box .inbox .siramachart4 {
+			height: 42%;
+		}
+	</style>
+</head>
+<body>
+	<div id="AllWrap">
+		<div class="left-box">
+			<div class="inbox">
+				<div class="chartheader">
+					2023 - 2024 전력 소모량 예측
+				</div>
+				<div class="chartcontent"></div>
+				<div id="powerConsumptionChart" style="height : 90%"></div>
+				<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+				<script>
+					document.addEventListener('DOMContentLoaded', function () {
+						// 데이터 정의
+						var powerConsumptionData = [
+							{
+								x: [
+									'2021-01', '2021-02', '2021-03', '2021-04', '2021-05', '2021-06',
+									'2021-07', '2021-08', '2021-09', '2021-10', '2021-11', '2021-12',
+									'2022-01', '2022-02', '2022-03', '2022-04', '2022-05', '2022-06',
+									'2022-07', '2022-08', '2022-09', '2022-10', '2022-11', '2022-12',
+									'2023-01', '2023-02', '2023-03', '2023-04', '2023-05', '2023-06',
+									'2023-07', '2023-08', '2023-09', '2023-10', '2023-11', '2023-12',
+									'2024-01', '2024-02', '2024-03', '2024-04', '2024-05', '2024-06',
+									'2024-07', '2024-08', '2024-09', '2024-10', '2024-11', '2024-12'
+								],
+								y: [
+									15555.06, 468378.09, 510252.39, 495540.18, 523391.49, 614258.73,
+									345110.22, 171626.13, 20861.1, 422055.9, 545154.12, 91249.11,
+									555967.89, 531552.42, 554705.82, 538705.08, 562809.51, 643697.19,
+									37114.2, 702184.23, 596134.35, 442745.01, 541401.65, 500493.23,
+									99026.64, 551849.67, 593723.97, 579011.76, 606863.07, 697730.31,
+									428581.8, 255097.71, 104332.68, 505527.48, 628625.7, 174720.69,
+									182498.23, 635321.26, 677195.56, 662483.35, 690334.66, 781201.9,
+									512053.39, 338569.3, 187804.27, 588999.07, 712097.29, 258192.28
+								],
+								type: 'scatter',
+								mode: 'lines',
+								line: {
+									color: 'blue',  // 파란색
+								},
+								name: '2021-2022'
+							},
+							{
+								x: [
+									'2023-01', '2023-02', '2023-03', '2023-04', '2023-05', '2023-06',
+									'2023-07', '2023-08', '2023-09', '2023-10', '2023-11', '2023-12',
+									'2024-01', '2024-02', '2024-03', '2024-04', '2024-05', '2024-06',
+									'2024-07', '2024-08', '2024-09', '2024-10', '2024-11', '2024-12'
+								],
+								y: [
+									99026.64, 551849.67, 593723.97, 579011.76, 606863.07, 697730.31,
+									428581.8, 255097.71, 104332.68, 505527.48, 628625.7, 174720.69,
+									182498.23, 635321.26, 677195.56, 662483.35, 690334.66, 781201.9,
+									512053.39, 338569.3, 187804.27, 588999.07, 712097.29, 258192.28
+								],
+								type: 'scatter',
+								mode: 'lines',
+								line: {
+									color: 'red',  // 빨간색
+								},
+								name: '2023-2024'
+							},
+						];
+						var powerConsumptionLayout = {
+							title: '2023-2024 전력 소모량 예측',
+							xaxis: {
+								title: '년도',
+								tickmode: 'array',
+								tickvals: [2021, 2022, 2023, 2024],
+								ticktext: ['2021', '2022', '2023', '2024']
+							},
+							yaxis: {
+								title: '전력 소모량(KWh)',
+							},
+						};
+						Plotly.newPlot('powerConsumptionChart', powerConsumptionData, powerConsumptionLayout);
+					});
+				</script>
+			</div>
+			<div class="inbox">
+				<div class="chartheader">
+					2023 - 2024 탄소 배출량 예측
+				</div>
+				<div class="chartcontent"></div>
+				<div id="carbonEmissionChart" style="height :90%;"></div>
+				<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+				<script>
+					document.addEventListener('DOMContentLoaded', function () {
+						var carbonEmissionData = [
+							{
+								x: [
+									'2023-01', '2023-02', '2023-03', '2023-04', '2023-05', '2023-06',
+									'2023-07', '2023-08', '2023-09', '2023-10', '2023-11', '2023-12',
+									'2024-01', '2024-02', '2024-03', '2024-04', '2024-05', '2024-06',
+									'2024-07', '2024-08', '2024-09', '2024-10', '2024-11', '2024-12'
+								],
+								y: [
+									99026.64 * 4.781, 551849.67 * 4.781, 593723.97 * 4.781, 579011.76 * 4.781, 606863.07 * 4.781, 697730.31 * 4.781,
+									428581.8 * 4.781, 255097.71 * 4.781, 104332.68 * 4.781, 505527.48 * 4.781, 628625.7 * 4.781, 174720.69 * 4.781,
+									182498.23 * 4.781, 635321.26 * 4.781, 677195.56 * 4.781, 662483.35 * 4.781, 690334.66 * 4.781, 781201.9 * 4.781,
+									512053.39 * 4.781, 338569.3 * 4.781, 187804.27 * 4.781, 588999.07 * 4.781, 712097.29 * 4.781, 258192.28 * 4.781
+								],
+								type: 'scatter',
+								mode: 'lines',
+								line: {
+									color: 'green',  // 빨간색	
+								},
+								name: '탄소 배출량'
+							},
+						];
+
+						// 탄소 배출량 레이아웃 정의
+						var carbonEmissionLayout = {
+							title: '2023-2024 탄소배출량 예측',
+							xaxis: {
+								title: '년월',
+								tickmode: 'array',
+								tickvals: carbonEmissionData[0].x,
+								ticktext: carbonEmissionData[0].x.map(function (month) {
+									var date = new Date(month + '-01');
+									if (date.getMonth() === 0) {
+										return date.toLocaleString('ko-KR', { year: 'numeric' });
+									} else {
+										return date.toLocaleString('ko-KR', { month: 'long' });
+									}
+								})
+							},
+							yaxis: {
+								title: '탄소 배출량(kg * CO2)',
+							},
+						};
+						// 차트 그리기
+						Plotly.newPlot('carbonEmissionChart', carbonEmissionData, carbonEmissionLayout);
+					});
+				</script>
+			</div>
+		</div>
+		<div class="right-box">
+			<div id="firstbox" class="inbox">
+				<div class="chartheader">
+					예측 데이터
+				</div>
+				<div class="siramachart1">
+					<h2>트랜드 그래프</h2>
+					<div class="chartcontent"><img src="~/img/TrandGraph.png" alt="TrandGraph" width="90%" height="90%" margin-left="30px"></div>
+				</div>
+				<div class="siramachart2">
+					<h2>계절성 그래프</h2>
+					<div class="chartcontent"><img src="~/img/JanchaGraph.png" alt="WeatherGraph" width="90%" height="90%"></div>
+				</div>
+				<div class="siramachart3">
+					<h2>잔차 그래프</h2>
+					<div class="chartcontent"> <img src="~/img/WeatherGraph.png" alt="JanchaGraph" width="90%" height="100%"></div>
+				</div>
+				<div class="siramachart4">
+					<h2>사리마 그래프</h2>
+					<div class="chartcontent"><img src="~/img/SarimaGraph.png" alt="SarimaGraph" width="90%" height="290px"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,241 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR&display=swap" rel="stylesheet">
+	<style>
+		/* layout제외 전체 레이아웃 */
+		#AllWrap {
+			position: absolute;
+			margin: 0px 0px 0px 60px;
+			top: 56px;
+			height: 896.5px;
+			width: 1860px;
+			box-sizing: border-box;
+			overflow: hidden; /* float 요소를 감싸기 위해 overflow 설정 */
+			padding: 10px 20px 10px 20px;
+		}
+		/* Header 추가 */
+		#Header {
+			height: 70px;
+			/* background-color: #22ff22; /* 헤더 배경색 */
+			box-sizing: border-box;
+			border-radius: 10px;
+			margin: 0px 0px 0px 0px;
+			display: flex; /* 내부 요소를 플렉스 컨테이너로 만듦 */
+			align-items: center; /* 세로 중앙 정렬 */
+		}
+		/* Header 안의 왼쪽과 오른쪽에 있는 div */
+		#LeftHeader, #RightHeader {
+			flex: 1; /* 동일한 비율로 너비를 나눔 */
+			box-sizing: border-box;
+			margin: 0px 5% 0px 5%; /* 오른쪽 간격 추가 */
+		}
+		/* AllWrap안의 왼쪽 구역 */
+		.left-box {
+			width: 905px;
+			height: 92%; /* 100% - Header의 높이(4%) - 간격(2%) */
+			/* background-color: #ffcc00; /* 왼쪽 박스 배경색 */
+			float: left; /* 좌우로 나란히 배치 */
+			box-sizing: border-box;
+			border-radius: 10px;
+			display: flex; /* 내부 요소를 플렉스 컨테이너로 만듦 */
+			flex-direction: column; /* 내부 요소를 세로로 나열함 */
+		}
+			/* left-box 안의 div1, div2, div3 */
+			.left-box .inbox {
+				flex: 1; /* 동일한 비율로 높이를 나눔 */
+				box-sizing: border-box;
+				background-color: white;
+				margin-bottom: 12px; /* 간격 추가 */
+				border-radius: 10px;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			}
+
+				/* 마지막 div에는 추가 간격을 주지 않음 */
+				.left-box .inbox:last-child {
+					margin-bottom: 0;
+				}
+
+		/* AllWrap안의 오른쪽 구역 */
+		.right-box {
+			width: 902px; /* 총 길이 1810 */
+			height: 92%; /* 100% - Header의 높이(4%) - 간격(2%) */
+			/* background-color: #66ccff; /* 오른쪽 박스 배경색 */
+			box-sizing: border-box;
+			float: left; /* 좌우로 나란히 배치 */
+			display: flex; /* 내부 요소를 플렉스 컨테이너로 만듦 */
+			flex-direction: column; /* 내부 요소를 세로로 나열함 */
+			margin-left: 12px;
+		}
+			/* right-box 안의 div1, div2*/
+			.right-box .inbox {
+				flex: 1; /* 동일한 비율로 높이를 나눔 */
+				background-color: white; /* 노란색 */
+				box-sizing: border-box;
+				margin-bottom: 12px; /* 간격 추가 */
+				border-radius: 10px;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			}
+
+				/* 마지막 div에는 추가 간격을 주지 않음 */
+				.right-box .inbox:last-child {
+					margin-bottom: 0;
+				}
+		/* header의 오른쪽 부분 */
+		#RightHeader {
+			background-color: #BBD0E9;
+		}
+		/* 드롭박스 조절 */
+		.form-select {
+			border-radius: 10px;
+		}
+		/* 차트 제목 쓰는 곳 */
+		.chartheader {
+			padding: 8px 16px 8px 16px;
+			font-family: 'NanumGothic', serif;
+			font-size: 18px;
+			font-weight: bold;
+			position: relative; /* Added to make the pseudo-element position relative to the .chartheader */
+			height: 43px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			background-color: rgba(0,0,0,.03);
+			border-top-left-radius: 10px;
+			border-top-right-radius: 10px;
+		}
+			/* 차트 제목 칸 밑줄 */
+			.chartheader::after {
+				content: ""; /* Add content to the pseudo-element */
+				display: block; /* Make it a block-level element to take the full width */
+				border-bottom: 1px solid rgba(0,0,0,.125); /* Specify the border style, color, and width */
+				width: 100%; /* Set the length of the underline (subtracting left padding) */
+				margin: 0 auto; /* Center the underline */
+				margin-top: 5px; /* Adjust the top margin as needed */
+				position: absolute; /* Position the underline relative to .chartheader */
+				left: 0; /* Align the underline to the left */
+				bottom: 0; /* Align the underline to the bottom */
+			}
+	</style>
+</head>
+<body>
+	<div id="AllWrap">
+		<div id="Header">
+			<div id="LeftHeader">
+				<select id="dataSelect">
+					<option selected value="온도/습도">온도/습도</option>
+					<option value="온도">온도</option>
+					<option value="습도">습도</option>
+					<option value="온도/습도">온도/습도</option>
+				</select>
+
+				<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+				<script type="text/javascript">
+					google.charts.load('current', { 'packages': ['corechart'] });
+					google.charts.setOnLoadCallback(drawChart);
+					<script type="text/javascript" >
+						google.charts.load('current', { 'packages': ['corechart'] });
+					google.charts.setOnLoadCallback(drawChart);
+
+					function drawChart() {
+						var selectedData = document.getElementById('dataSelect').value;
+
+						var dataOne = new google.visualization.DataTable();
+						dataOne.addColumn('string', 'AhuId');
+
+						if (selectedData === '온도' || selectedData === '온도/습도') {
+							dataOne.addColumn('number', '실공급온도차');
+							dataOne.addColumn('number', '사용된온도');
+						}
+
+						if (selectedData === '습도' || selectedData === '온도/습도') {
+							dataOne.addColumn('number', '실공급습도차');
+							dataOne.addColumn('number', '사용된습도');
+						}
+
+						dataPopulation(dataOne, (List<Wmchart>)ViewData["ChartOneData"]);
+
+						var chartOne = new google.visualization.BarChart(document.getElementById('chartOne_div'));
+						chartOne.draw(dataOne, { title: '여름' });
+
+
+					@foreach (var item in (List<Wmchart>)ViewData["ChartOneData"])
+					{
+						@:dataOne.addRow(['@item.AhuId', @item.AvgSetSupTempDiff, @item.AvgSetSupHumDiff, @item.AvgSupRetTempDiff, @item.AvgSupRetHumDiff]);
+					}
+
+												var chartOne = new google.visualization.BarChart(document.getElementById('chartOne_div'));
+						chartOne.draw(dataOne, { title: '여름' });
+
+						var dataTwo = new google.visualization.DataTable();
+						dataTwo.addColumn('string', 'AhuId');
+						dataTwo.addColumn('number', '실공급온도차');
+						dataTwo.addColumn('number', '실공급습도차');
+						dataTwo.addColumn('number', '사용된온도');
+						dataTwo.addColumn('number', '사용된습도');
+
+					@foreach (var item in (List<Wmchart>)ViewData["ChartTwoData"])
+					{
+						@:dataTwo.addRow(['@item.AhuId', @item.AvgSetSupTempDiff, @item.AvgSetSupHumDiff, @item.AvgSupRetTempDiff, @item.AvgSupRetHumDiff]);
+					}
+
+												var chartTwo = new google.visualization.BarChart(document.getElementById('chartTwo_div'));
+						chartTwo.draw(dataTwo, { title: '겨울' });
+
+						var dataThree = new google.visualization.DataTable();
+						dataThree.addColumn('string', 'AhuId');
+						dataThree.addColumn('number', '실공급온도차');
+						dataThree.addColumn('number', '실공급습도차');
+						dataThree.addColumn('number', '사용된온도');
+						dataThree.addColumn('number', '사용된습도');
+
+					@foreach (var item in (List<Wmchart>)ViewData["ChartThreeData"])
+					{
+						@:dataThree.addRow(['@item.AhuId', @item.AvgSetSupTempDiff, @item.AvgSetSupHumDiff, @item.AvgSupRetTempDiff, @item.AvgSupRetHumDiff]);
+					}
+
+												var chartThree = new google.visualization.BarChart(document.getElementById('chartThree_div'));
+						chartThree.draw(dataThree, { title: '봄/가을' });
+					}
+
+					document.getElementById('dataSelect').addEventListener('change', drawChart);
+				</script>
+
+			</div>
+		</div>
+		<div class="left-box">
+			<div class="inbox">
+				<div class="chartheader">
+					온습도 설정 반환 여부
+				</div>
+				<div id="chartOne_div" style="width: 800px; height: 300px;"></div>
+			</div>
+
+			<div class="inbox">
+				<div class="chartheader">
+					반환 - 공급 공조기팬 주파수
+				</div>
+				<div id="chartTwo_div" style="width: 800px; height: 300px;"></div>
+			</div>
+			<div class="inbox">
+				<div class="chartheader">
+					반환 - 설정
+				</div>
+				<div id="chartThree_div" style="width: 800px; height: 300px;"></div>
+			</div>
+		</div>
+		<div class="right-box">
+			<div id="firstbox" class="inbox">
+				<div class="chartheader">
+					(전날, 전달)대비 차이
+				</div>
+			</div>
+			<div id="secondbox" class="inbox">
+				<div class="chartheader">
+					작동상태, 운전 모드
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

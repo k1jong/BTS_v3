@@ -1,0 +1,215 @@
+﻿@using System.Globalization;
+@model (IEnumerable<Infofare> Data1, IEnumerable<Infofare> Data2)
+
+<!DOCTYP htmlL>
+<html>
+<head>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR&display=swap" rel="stylesheet">
+	<style>
+		/* layout제외 전체 레이아웃 */
+		#AllWrap {
+			position: absolute;
+			margin: 0px 0px 0px 60px;
+			top: 56px;
+			height: 896.5px;
+			width: 1860px;
+			box-sizing: border-box;
+			overflow: hidden; /* float 요소를 감싸기 위해 overflow 설정 */
+			padding: 30px;
+		}
+		/* Header 추가 */
+		#Header {
+			height: 6%;
+			/* background-color: #22ff22; /* 헤더 배경색 */
+			box-sizing: border-box;
+			padding: 10px;
+			border-radius: 10px;
+			margin: 0px 0px 15px 0px;
+			display: flex; /* 내부 요소를 플렉스 컨테이너로 만듦 */
+			align-items: center; /* 세로 중앙 정렬 */
+		}
+
+		/* AllWrap안의 왼쪽 구역 */
+		.left-box {
+			width: 49%;
+			height: 92%;
+			background-color: #22A2F2; /* 왼쪽 박스 배경색 파란색*/
+			float: left; /* 좌우로 나란히 배치 */
+			box-sizing: border-box;
+			padding: 10px;
+			border-radius: 10px;
+		}
+		/* AllWrap안의 오른족 구역 */
+		.right-box {
+			width: 49%;
+			height: 92%;
+			/* background-color: #66ccff; /* 오른쪽 박스 배경색 */
+			float: left; /* 좌우로 나란히 배치 */
+			box-sizing: border-box;
+			display: flex; /* 내부 요소를 플렉스 컨테이너로 만듦 */
+			flex-direction: column; /* 내부 요소를 세로로 나열함 */
+			margin-left: 2%;
+		}
+			/* right-box 안의 div1, div2, div3 */
+			.right-box .inbox {
+				flex: 1; /* 동일한 비율로 높이를 나눔 */
+				background-color: #ACF266; /* 연두색 */
+				box-sizing: border-box;
+				padding: 10px;
+				margin-bottom: 4%; /* 간격 추가 */
+				border-radius: 10px;
+			}
+
+				/* 마지막 div에는 추가 간격을 주지 않음 */
+				.right-box .inbox:last-child {
+					margin-bottom: 0;
+				}
+		/* header의 오른쪽 부분 */
+		#RightHeader {
+			background-color: #BBD0E9;
+		}
+		/* 드롭박스 조절 */
+		.form-select {
+			border-radius: 10px;
+		}
+	</style>
+	</style>
+</head>
+<body>
+	<div id="AllWrap">
+		<div id="Header">
+			<div id="LeftHeader">
+				일자:
+				<select id="dateSelect">
+						@foreach (var date in ViewBag.Dates)
+						{
+						<option value="@date.Value"> @date.Text</option>
+						}
+				</select>
+				비교일자:
+				<select id="dateSelect2">
+						@foreach (var date in ViewBag.Dates)
+						{
+						<option value="@date.Value">@date.Text</option>
+						}
+				</select>
+				<button onclick="goToDatePage()">조회하기</button>
+
+				<script>
+					function goToDatePage() {
+						var selectedDate = document.getElementById('dateSelect').value;
+						var selectedDate2 = document.getElementById('dateSelect2').value;
+						window.location.href = '/Home/info_fare?date1=' + selectedDate + '&date2=' + selectedDate2;
+					}
+				</script>
+			</div>
+		</div>
+		<div class="left-box">
+			<div id="nowchart">
+
+				<div id="myChart1"></div>
+				<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+				<script>
+					var selectedDate1 = '@Model.Data1.FirstOrDefault()?.FARE_DT?.Substring(0, 4)';
+					var selectedDate2 = '@Model.Data2.FirstOrDefault()?.FARE_DT?.Substring(0, 4)';
+
+
+					var data1 = {
+						x: @Html.Raw(Json.Serialize(Model.Data1.Select(c => DateTime.ParseExact(c.FARE_DT, "yyyyMM", CultureInfo.InvariantCulture).ToString("MM월")))),
+						y: @Html.Raw(Json.Serialize(Model.Data1.Select(c => c.Fare_Cur_Month_Fare))),
+						type: 'bar',
+						name: selectedDate1,
+						marker: {
+							color: ['rgba(75, 192, 192, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(75, 192, 192, 0.6)'],
+							line: {
+								color: ['rgba(75, 192, 192, 1)', 'rgba(75, 192, 192, 1)', 'rgba(75, 192, 192, 1)', 'rgba(75, 192, 192, 1)', 'rgba(75, 192, 192, 1)', 'rgba(75, 192, 192, 1)', 'rgba(75, 192, 192, 1)', 'rgba(75, 192, 192, 1)', 'rgba(75, 192, 192, 1)', 'rgba(75, 192, 192, 1)', 'rgba(75, 192, 192, 1)', 'rgba(75, 192, 192, 1)'],
+								width: 1
+							}
+						}
+					};
+
+					var data2 = {
+						x: @Html.Raw(Json.Serialize(Model.Data2.Select(c => DateTime.ParseExact(c.FARE_DT, "yyyyMM", CultureInfo.InvariantCulture).ToString("MM월")))),
+						y: @Html.Raw(Json.Serialize(Model.Data2.Select(c => c.Fare_Cur_Month_Fare))),
+						type: 'bar',
+						name: selectedDate2,
+						marker: {
+							color: ['rgba(128, 128, 128, 0.6)', 'rgba(128, 128, 128, 0.6)', 'rgba(128, 128, 128, 0.6)', 'rgba(128, 128, 128, 0.6)', 'rgba(128, 128, 128, 0.6)', 'rgba(128, 128, 128, 0.6)', 'rgba(128, 128, 128, 0.6)', 'rgba(128, 128, 128, 0.6)', 'rgba(128, 128, 128, 0.6)', 'rgba(128, 128, 128, 0.6)', 'rgba(128, 128, 128, 0.6)', 'rgba(128, 128, 128, 0.6)'],
+							line: {
+								color: ['rgba(128, 128, 128, 1)', 'rgba(128, 128, 128, 1)', 'rgba(128, 128, 128, 1)', 'rgba(128, 128, 128, 1)', 'rgba(128, 128, 128, 1)', 'rgba(128, 128, 128, 1)', 'rgba(128, 128, 128, 1)', 'rgba(128, 128, 128, 1)', 'rgba(128, 128, 128, 1)', 'rgba(128, 128, 128, 1)', 'rgba(128, 128, 128, 1)', 'rgba(128, 128, 128, 1)'],
+								width: 1
+							}
+						}
+					};
+
+
+
+					var layout = {
+						barmode: 'group',
+						yaxis: {
+							title: '요금'
+						}
+					};
+
+					Plotly.newPlot('myChart1', [data1, data2], layout);
+				</script>
+			</div>
+		</div>
+		<div class="right-box">
+			<div id="firstbox" class="inbox">전년 대비 요금 비교</div>
+			<div id="secondbox" class="inbox">
+				<table>
+					<thead>
+						<tr>
+							<th></th> <!-- 빈 셀 -->
+								@for (int month = 1; month <= 12; month++)
+								{
+								<th>@DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(month)</th>
+								}
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>요금</td>
+								@for (int month = 1; month <= 12; month++)
+								{
+									var data = Model.Data1.FirstOrDefault(d => DateTime.ParseExact(d.FARE_DT, "yyyyMM", CultureInfo.InvariantCulture).Month == month);
+								<td>@(data?.Fare_Cur_Month_Fare ?? 0)</td>
+								}
+						</tr>
+						<tr>
+							<td>전년도 요금</td>
+								@for (int month = 1; month <= 12; month++)
+								{
+									var data = Model.Data2.FirstOrDefault(d => DateTime.ParseExact(d.FARE_DT, "yyyyMM", CultureInfo.InvariantCulture).Month == month);
+								<td>@(data?.Fare_Cur_Month_Fare ?? 0)</td>
+								}
+						</tr>
+						<tr>
+							<td>퍼센트 차이</td>
+								@for (int month = 1; month <= 12; month++)
+								{
+									var data1 = Model.Data1.FirstOrDefault(d => DateTime.ParseExact(d.FARE_DT, "yyyyMM", CultureInfo.InvariantCulture).Month == month);
+									var data2 = Model.Data2.FirstOrDefault(d => DateTime.ParseExact(d.FARE_DT, "yyyyMM", CultureInfo.InvariantCulture).Month == month);
+									var currentFare = data1?.Fare_Cur_Month_Fare ?? 0;
+									var lastYearFare = data2?.Fare_Cur_Month_Fare ?? 0;
+									var numerator = Math.Max(currentFare, lastYearFare);
+									var denominator = Math.Min(currentFare, lastYearFare);
+									var percentDifference = denominator != 0
+									? Math.Round((numerator - denominator) / (decimal)denominator * 100, 2)
+									: 0;
+									var displayDifference = currentFare < lastYearFare
+									? $"-{Math.Abs(percentDifference)}%"
+									: $"{percentDifference}%";
+								<td>@displayDifference</td>
+								}
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+			<div id="thirdbox" class="inbox">전년 대비 탄소 배출량 비교 그래프</div>
+		</div>
+	</div>
+</body>
+</html>

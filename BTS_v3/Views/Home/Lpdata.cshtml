@@ -1,0 +1,291 @@
+﻿	@model IEnumerable<IGrouping<int, WMAHUData>>
+<!DOCTYP htmlL>
+<html>
+<head>
+	<title>계절별 공조기 효율</title>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR&display=swap" rel="stylesheet">
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<style>
+		/* layout제외 전체 레이아웃 */
+		#AllWrap {
+			position: absolute;
+			margin: 0px 0px 0px 60px;
+			top: 56px;
+			height: 896.5px;
+			width: 1860px;
+			box-sizing: border-box;
+			overflow: hidden; /* float 요소를 감싸기 위해 overflow 설정 */
+			padding: 10px 20px 10px 20px;
+		}
+		/* AllWrap안의 왼쪽 구역 */
+		.left-box {
+			width: 905px;
+			height: 99%;
+			float: left; /* 좌우로 나란히 배치 */
+			box-sizing: border-box;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			border-radius: 10px;
+			display: flex; /* 내부 요소를 플렉스 컨테이너로 만듦 */
+			flex-direction: column; /* 내부 요소를 세로로 나열함 */
+		}
+			/* left-box 안의 div1, div2, div3 */
+			.left-box .inbox {
+				flex: 1; /* 동일한 비율로 높이를 나눔 */
+				background-color: white; /* 왼쪽 박스 배경색 파란색*/
+				box-sizing: border-box;
+				margin-bottom: 12px; /* 간격 추가 */
+				border-radius: 10px;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			}
+				/* 마지막 div에는 추가 간격을 주지 않음 */
+				.left-box .inbox:last-child {
+					margin-bottom: 0;
+				}
+		/* AllWrap안의 오른족 구역 */
+		.right-box {
+			width: 902px;
+			height: 99%;
+			/* background-color: #66ccff; /* 오른쪽 박스 배경색 */
+			float: left; /* 좌우로 나란히 배치 */
+			box-sizing: border-box;
+			display: flex; /* 내부 요소를 플렉스 컨테이너로 만듦 */
+			flex-direction: column; /* 내부 요소를 세로로 나열함 */
+			margin-left: 12px;
+		}
+			/* right-box 안의 div1, div2, div3 */
+			.right-box .inbox {
+				box-sizing: border-box;
+				background-color: white; /* 연두색 */
+				margin-bottom: 12px; /* 간격 추가 */
+				border-radius: 10px;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			}
+
+				/* 마지막 div에는 추가 간격을 주지 않음 */
+				.right-box .inbox:last-child {
+					margin-bottom: 0;
+				}
+		/* 차트 제목 쓰는 곳 */
+		.chartheader {
+			padding: 8px 16px 8px 16px;
+			font-family: 'NanumGothic', serif;
+			font-size: 18px;
+			font-weight: bold;
+			position: relative; /* Added to make the pseudo-element position relative to the .chartheader */
+			height: 43px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			background-color: rgba(0,0,0,.03);
+			border-top-left-radius: 10px;
+			border-top-right-radius: 10px;
+		}
+			/* 차트 제목 칸 밑줄 */
+			.chartheader::after {
+				content: ""; /* Add content to the pseudo-element */
+				display: block; /* Make it a block-level element to take the full width */
+				border-bottom: 1px solid rgba(0,0,0,.125); /* Specify the border style, color, and width */
+				width: 100%; /* Set the length of the underline (subtracting left padding) */
+				margin: 0 auto; /* Center the underline */
+				margin-top: 5px; /* Adjust the top margin as needed */
+				position: absolute; /* Position the underline relative to .chartheader */
+				left: 0; /* Align the underline to the left */
+				bottom: 0; /* Align the underline to the bottom */
+			}
+	</style>
+</head>
+<body>
+	<div id="AllWrap">
+		<div class="left-box">
+			<div id="nowchart" class="inbox">
+				<div class="chartheader">
+					계절에 따른 공조기 성능
+				</div>
+				<div id="scatterPlot" style="width: 100%; height: autox;"></div>
+
+					@section ScatterPlotScripts {
+					<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+					<script>
+						document.addEventListener("DOMContentLoaded", function () {
+							// ViewBag에서 JSON 문자열로 변환된 데이터 가져오기
+							var Spring = @Html.Raw(ViewBag.Spring);
+							var Winter = @Html.Raw(ViewBag.Winter);
+							var Summer = @Html.Raw(ViewBag.Summer);
+							var Fall = @Html.Raw(ViewBag.Fall);
+
+							var trace1 = {
+								y: Spring.map(point => point.Item1),
+								x: Spring.map(point => point.Item2),
+								mode: 'markers',
+								type: 'scatter',
+								name: '봄',
+								marker: { size: 6, color: 'orange' }
+							};
+
+							var trace2 = {
+								y: Winter.map(point => point.Item1),
+								x: Winter.map(point => point.Item2),
+								mode: 'markers',
+								type: 'scatter',
+								name: '겨울',
+								marker: { size: 6, color: 'blue' }
+							};
+
+							var trace3 = {
+								y: Summer.map(point => point.Item1),
+								x: Summer.map(point => point.Item2),
+								mode: 'markers',
+								type: 'scatter',
+								name: '여름',
+								marker: { size: 6, color: 'red' }
+							};
+
+							var trace4 = {
+								y: Fall.map(point => point.Item1),
+								x: Fall.map(point => point.Item2),
+								mode: 'markers',
+								type: 'scatter',
+								name: '가을',
+								marker: { size: 6, color: 'green' }
+							};
+
+							var layout = {
+								xaxis: { title: '전력 소모량' },
+								yaxis: { title: '성 능' },
+								title: 'Scatter Plot',
+								height : 800,
+								tickvals: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '23:00'],
+								ticktext: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '23:00']
+							};
+
+							var data = [trace1, trace2, trace3, trace4];
+
+							Plotly.newPlot('scatterPlot', data, layout);
+						});
+					</script>
+				}
+						</div>
+		</div>
+		<div class="right-box">
+			<div id="firstbox" class="inbox">
+				<div class="chartheader">
+					계절별 설정온도와 클린룸의 온도차
+				</div>
+				<div id="chart" style="height: 430px"></div>
+
+				<script>
+					var datasets = [];
+
+					function getSeasonColor(season) {
+						var colors = {
+							'봄': 'rgb(255, 165, 0)',   // Orange
+							'여름': 'rgb(255, 0, 0)',   // Red
+							'가을': 'rgb(0, 128, 0)', 
+							'겨울': 'rgb(0, 0, 255)'    // Blue
+						};
+
+						return colors[season];
+					}
+
+						@foreach (var group in Model)
+						{
+							var season = (group.Key >= 3 && group.Key <= 5) ? "봄" :
+							(group.Key >= 6 && group.Key <= 8) ? "여름" :
+							(group.Key >= 9 && group.Key <= 11) ? "가을" :
+							"겨울";
+
+							<text>
+							datasets.push({
+								name: '@season',
+								y: @Html.Raw(Json.Serialize(group.Select(x => x.Ahu_set_temp - x.Ahu_ret_temp))),
+								type: 'scatter',
+								mode: 'lines',
+								line: { color: getSeasonColor('@Html.Raw(season)') }
+							});
+							</text>
+						}
+						var layout = {
+						title: '계절별 하루동안의 설정온도와 실제 클린룸의 온도차',
+						xaxis: {
+							tickformat: '%Y-%m-%d %H:%M:%S.%L',
+							tickvals: @Html.Raw(Json.Serialize(Model.First().Select(x => x.Run_datetime)))
+									},
+						yaxis: {
+							title: 'Sup온도 - Ret온도',
+						}
+					};
+					Plotly.newPlot('chart', datasets, layout);
+				</script>
+			</div>
+			<div id="secondbox" class="inbox">
+				<div class="chartheader">
+					월별 전기요금	
+				</div>
+					@{
+    var chartData1 = ViewBag.ChartData1 as IEnumerable<Infofare>;
+}
+
+<div id="barChart"></div>
+
+<script>
+    // Extracting data for Plotly
+    var fareDates = [];
+    var fareValues = [];
+    var fareColors = [];
+
+    @foreach (var item in chartData1)
+    {
+        <text>
+            var lastTwoChars = '@item.FARE_DT.Substring(Math.Max(0, @item.FARE_DT.Length - 2))';
+            fareDates.push(lastTwoChars + '월');
+        </text>
+        <text>fareValues.push('@item.Fare_Cur_Month_Fare');</text>
+
+        // Assign color based on month (e.g., make June to September red)
+        @if (item.FARE_DT.EndsWith("06") || item.FARE_DT.EndsWith("07") || item.FARE_DT.EndsWith("08"))
+        {
+            <text>fareColors.push('red');</text>
+        }
+        else if (item.FARE_DT.EndsWith("09") || item.FARE_DT.EndsWith("10") || item.FARE_DT.EndsWith("11"))
+        {
+            <text>fareColors.push('green');</text> // You can set a default color for other months
+        }
+		else if (item.FARE_DT.EndsWith("12") || item.FARE_DT.EndsWith("01") || item.FARE_DT.EndsWith("02"))
+        {
+            <text>fareColors.push('blue');</text> // You can set a default color for other months
+        }
+		else 
+        {
+            <text>fareColors.push('orange');</text> // You can set a default color for other months
+        }
+    }
+
+    // Creating a Plotly bar chart
+    var data = [{
+        x: fareDates,
+        y: fareValues,
+        type: 'bar',
+        marker: {
+            color: fareColors // Use the custom colors for each bar
+        }
+    }];
+
+    var layout = {
+        height: 340,
+        xaxis: {
+            title: '날짜',
+            type: 'category' // Set the x-axis type to category for date strings
+        },
+        yaxis: {
+            title: '전력사용량'
+        }
+    };
+
+    Plotly.newPlot('barChart', data, layout);
+</script>
+
+			</div>
+		</div>
+	</div>
+</body>
+</html>

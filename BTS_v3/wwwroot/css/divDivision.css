@@ -1,0 +1,182 @@
+﻿#wrap {
+    width: 1050px; /*bootstrap : container (전체 화면 , width :960px)*/
+    font-size: 20px;
+}
+
+#aside {
+    width: 75%; /* 부모 요소인 #wrap의 75% */
+    height: 600px;
+    background-color: white;
+    line-height: 600px;
+    text-align: center;
+    float: left;
+}
+
+#section {
+    width: 25%; /* 부모 요소인 #wrap의 25% */
+    height: 600px;
+    background-color: white;
+    float: left;
+}
+
+#footer {
+    width: 100%; /* 부모 요소인 #wrap의 100% */
+    height: 100px;
+    background-color: grey;
+    border-radius : 5px;
+    color: white;
+    text-align: center;
+    float: left;
+}
+
+#aside img {
+    width: 100%; /* 이미지의 최대 너비를 부모 요소인 #aside의 너비에 맞춤 */
+    height: 100%; /* 이미지의 최대 높이를 부모 요소인 #aside의 높이에 맞춤 */
+}
+
+#fullscreen {
+    width: 960px;
+    height: 100px;
+}
+
+#screen1 {
+    width: 120px;
+    height: 100px;
+    /*background-color: black;*/
+    float: left;
+}
+
+#screen1-1 {
+    width: 100px;
+    height: 50px;
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#screen1-2 {
+    width: 100px;
+    height: 50px;
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#screen2 {
+    width: 130px;
+    height: 100px;
+    /*background-color: black;*/
+    float: left;
+}
+
+#screen2-1 {
+    width: 100px;
+    height: 50px;
+    /*background-color: blue;*/
+    align-items: center;
+    display: flex;
+}
+
+#screen2-2 {
+    width: 100px;
+    height: 50px;
+    /*background-color: green;*/
+    align-items: center;
+    display: flex;
+}
+
+#screen3 {
+    width: 120px;
+    height: 100px;
+    /*background-color: black;*/
+    float: left;
+}
+
+#screen3-1 {
+    width: 100px;
+    height: 50px;
+    /*background-color: black;*/
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#screen3-2 {
+    width: 100px;
+    height: 50px;
+    /*background-color: pink;*/
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#screen4 {
+    width: 180px;
+    height: 100px;
+    /*background-color: black;*/
+    float: left;
+}
+
+#screen4-1 {
+    width: 100px;
+    height: 50px;
+    /*background-color: orange;*/
+    align-items: center;
+    display: flex;
+}
+
+#screen4-2 {
+    width: 100px;
+    height: 50px;
+    /*background-color: purple;*/
+    align-items: center;
+    display: flex;
+}
+
+#screen5 {
+    width: 110px;
+    height: 100px;
+    /*background-color: black;*/
+    float: left;
+}
+
+#screen5-1 {
+    width: 100px;
+    height: 50px;
+    /*background-color: rgb(255, 0, 0);*/
+    align-items: center;
+    display: flex;
+}
+
+#screen5-2 {
+    width: 100px;
+    height: 50px;
+    /*background-color: yellow;*/
+    align-items: center;
+    display: flex;
+}
+
+#screen6 {
+    width: 110px;
+    height: 100px;
+    /*background-color: black;*/
+    float: left;
+}
+
+#screen6-1 {
+    width: 100px;
+    height: 50px;
+    /*background-color: blue;*/
+    align-items: center;
+    justify-content: flex-end;
+    display: flex;
+}
+
+#screen6-2 {
+    width: 100px;
+    height: 50px;
+    /*background-color: green;*/
+    align-items: center;
+    justify-content: flex-end;
+    display: flex;
+}
